@@ -1,0 +1,1902 @@
+<tw-storydata name="Just One More Question" startnode="1" creator="Twine" creator-version="2.11.1" format="Harlowe" format-version="3.3.9" ifid="20972AE3-8727-448B-B26A-57FE9F1D2CAB" options="" tags="" zoom="0.3" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css"></style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-tag name="startup" color="yellow"></tw-tag><tw-passagedata pid="1" name="Cottage" tags="" position="500,225" size="100,100">&lt;div class=&quot;scene&quot;&gt;
+  &lt;div class=&quot;sidebar&quot;&gt;
+    (link: &quot;👀 Look closer&quot;)[
+      (set: $lastInterrupt to &quot;look&quot;)
+      (goto: &quot;Cottage_SelectAnchor&quot;)
+    ]
+    (link: &quot;💭 Imagine&quot;)[
+      (set: $lastInterrupt to &quot;imagine&quot;)
+      (goto: &quot;Cottage_SelectAnchor&quot;)
+    ]
+    (link: &quot;❓ Ask&quot;)[
+      (set: $lastInterrupt to &quot;ask&quot;)
+      (goto: &quot;Cottage_SelectAnchor&quot;)
+    ]
+    (link: &quot;😟 I&#39;m scared&quot;)[
+      (set: $lastInterrupt to &quot;scared&quot;)
+      (goto: &quot;Cottage_SelectAnchor&quot;)
+    ]
+  &lt;/div&gt;
+  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+    Deep in the forest, Goldilocks found a small wooden cottage. Smoke curled gently from the chimney.
+    (if: $detourText is not &quot;&quot;)[
+      &lt;div class=&quot;anchorbox&quot;&gt;
+        (print: $detourText)
+      &lt;/div&gt;
+    ]
+    (if: $visitedAnchors&#39;s length &gt;= 2)[
+      (link: &quot;She decided to go inside…&quot;)[
+        (set: $detourText to &quot;&quot;)
+        (set: $selectedAnchor to &quot;&quot;)
+        (set: $lastInterrupt to &quot;&quot;)
+        (set: $detourTurns to 0)
+        (goto: &quot;Kitchen&quot;)
+      ]
+    ](else:)[
+      (text-color:&quot;#888&quot;)[Take a quick look around first.]
+    ]
+  &lt;/div&gt;
+  &lt;div style=&quot;font-size:0.8em; opacity:0.7;&quot;&gt;
+    visited count: (print: $visitedAnchors&#39;s length)&lt;br&gt;
+    visited: (print: $visitedAnchors)&lt;br&gt;
+    selected: (print: $selectedAnchor)&lt;br&gt;
+    interrupt: (print: $lastInterrupt)
+  &lt;/div&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="2" name="Cottage_SelectAnchor" tags="" position="625,225" size="100,100">&lt;!--SOLO: pick one anchor, prefer unvisited --&gt;
+(set: _opts to (a:))
+
+(for: each _a, ...$anchors)[
+  (if: not($visitedAnchors contains _a))[
+    (set: _opts to _opts + (a:_a))
+  ]
+]
+
+(if: _opts&#39;s length &gt; 0)[
+  (set: $selectedAnchor to (either: ..._opts))
+]
+(else:)[
+  (set: $selectedAnchor to (either: ...$anchors))
+]
+
+(goto: &quot;Cottage_Detour&quot;)</tw-passagedata><tw-passagedata pid="3" name="Cottage_Detour" tags="" position="575,350" size="100,100">  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+(if: not($visitedAnchors contains $selectedAnchor))[
+  (set: $visitedAnchors to it + (a:$selectedAnchor))
+]
+    
+(set: _maxTurns to 2)
+(set: _turn to $detourTurns + 1)
+(set: _t to &quot;&quot;)
+
+&lt;!--Ensure visitedAnchors updates AFTER an anchor is chosen --&gt;
+(if: $selectedAnchor is &quot;&quot;)[
+  (set: $detourText to &quot;No anchor was selected. Try choosing an anchor again.&quot;)
+  (goto: &quot;Cottage&quot;)
+]
+
+&lt;!-- Add to visited (no duplicates) --&gt;
+(if: not($visitedAnchors contains $selectedAnchor))[
+  (set: $visitedAnchors to $visitedAnchors + (a: $selectedAnchor))
+]
+
+&lt;!--Text generation (safe: includes fallback) --&gt;
+(if: $selectedAnchor is &quot;door&quot;)[
+  (if: $lastInterrupt is &quot;look&quot;)[(set: _t to &quot;Goldilocks studied the wooden door. It looked old but sturdy.&quot;)]
+  (else-if: $lastInterrupt is &quot;ask&quot;)[(set: _t to &quot;Why might someone keep a door closed in the forest?&quot;)]
+  (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: _t to &quot;What if the door creaked open and a friendly voice said hello?&quot;)]
+  (else-if: $lastInterrupt is &quot;scared&quot;)[(set: _t to &quot;New places can feel a bit spooky. But you&#39;re safe.&quot;)]
+  (else:)[(set: _t to &quot;Goldilocks looked at the door for a moment.&quot;)]
+]
+(else-if: $selectedAnchor is &quot;chimney&quot;)[
+  (if: $lastInterrupt is &quot;look&quot;)[(set: _t to &quot;Smoke curled gently from the chimney. The air smelled warm and cosy.&quot;)]
+  (else-if: $lastInterrupt is &quot;ask&quot;)[(set: _t to &quot;What do you think they&#39;re cooking inside?&quot;)]
+  (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: _t to &quot;What if the smoke made a bear-shape in the sky?&quot;)]
+  (else-if: $lastInterrupt is &quot;scared&quot;)[(set: _t to &quot;Warm smoke usually means a cosy home, not danger.&quot;)]
+  (else:)[(set: _t to &quot;Goldilocks watched the chimney for a moment.&quot;)]
+]
+(else-if: $selectedAnchor is &quot;window&quot;)[
+  (if: $lastInterrupt is &quot;look&quot;)[(set: _t to &quot;Goldilocks peered through the window and spotted a table inside.&quot;)]
+  (else-if: $lastInterrupt is &quot;ask&quot;)[(set: _t to &quot;Why are there three bowls on that table?&quot;)]
+  (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: _t to &quot;What if someone set the table just moments ago?&quot;)]
+  (else-if: $lastInterrupt is &quot;scared&quot;)[(set: _t to &quot;We’re still outside. We can take it slow.&quot;)]
+  (else:)[(set: _t to &quot;Goldilocks glanced at the window for a moment.&quot;)]
+]
+(else:)[
+  (set: _t to &quot;Goldilocks paused and looked around the cottage.&quot;)
+]
+
+(set: $detourText to _t)
+
+&lt;div class=&quot;anchorbox&quot;&gt;$detourText&lt;/div&gt;
+
+    &lt;!-- Debug --&gt;
+    &lt;div style=&quot;font-size:0.8em; opacity:0.7;&quot;&gt;
+      visited count: (print:$visitedAnchors&#39;s length)&lt;br&gt;
+      visited: (print:$visitedAnchors)&lt;br&gt;
+      selected: (print:$selectedAnchor)&lt;br&gt;
+      interrupt: (print:$lastInterrupt)
+    &lt;/div&gt;
+
+&lt;!--Turn options --&gt;
+(if: _turn &lt; _maxTurns)[
+  (link: &quot;One more thought&quot;)[
+    (set: $detourTurns to _turn)
+    (goto: &quot;Cottage_Detour_FollowUp&quot;)
+  ]
+  (link: &quot;Back to the story&quot;)[
+    (set: $detourTurns to 0)
+    (goto: &quot;Cottage&quot;)
+  ]
+]
+(else:)[
+  (text-color:&quot;#888&quot;)[Shall we see what happens next?]
+  (link: &quot;Back to the story&quot;)[
+    (set: $detourTurns to 0)
+    (goto: &quot;Cottage&quot;)
+  ]
+]</tw-passagedata><tw-passagedata pid="4" name="Cottage_Detour_FollowUp" tags="" position="700,350" size="100,100">&lt;div class=&quot;main&quot;&gt;
+  &lt;div style=&quot;text-align:center;&quot;&gt;
+    &lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; width=&quot;800&quot;&gt;
+  &lt;/div&gt;
+
+  (set: $detourFollow to &quot;&quot;)
+
+  (if: $selectedAnchor is &quot;door&quot;)[
+    (if: $lastInterrupt is &quot;look&quot;)[(set: $detourFollow to &quot;The handle looked shiny, like it had been used today.&quot;)]
+    (else-if: $lastInterrupt is &quot;ask&quot;)[(set: $detourFollow to &quot;If Goldilocks knocked, someone might answer… or the house might stay quiet.&quot;)]
+    (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: $detourFollow to &quot;Maybe the door has a secret squeak sound—eeeek!—like it’s telling jokes.&quot;)]
+    (else-if: $lastInterrupt is &quot;scared&quot;)[(set: $detourFollow to &quot;If you ever feel scared, you can always pause and take a breath.&quot;)]
+    (else:)[(set: $detourFollow to &quot;Goldilocks stayed near the door for a moment longer.&quot;)]
+  ]
+  (else-if: $selectedAnchor is &quot;chimney&quot;)[
+    (if: $lastInterrupt is &quot;look&quot;)[(set: $detourFollow to &quot;The smoke rose slowly, not rushing—like the cottage was calm.&quot;)]
+    (else-if: $lastInterrupt is &quot;ask&quot;)[(set: $detourFollow to &quot;If it’s porridge, it might be cooling down right now.&quot;)]
+    (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: $detourFollow to &quot;What if the smoke spelled a word in the air—like ‘hello’—then vanished?&quot;)]
+    (else-if: $lastInterrupt is &quot;scared&quot;)[(set: $detourFollow to &quot;Warm smells can be comforting. Slow and steady.&quot;)]
+    (else:)[(set: $detourFollow to &quot;Goldilocks watched the chimney for a moment longer.&quot;)]
+  ]
+  (else-if: $selectedAnchor is &quot;window&quot;)[
+    (if: $lastInterrupt is &quot;look&quot;)[(set: $detourFollow to &quot;The bowls were different sizes—big, medium, and small—just waiting.&quot;)]
+    (else-if: $lastInterrupt is &quot;ask&quot;)[(set: $detourFollow to &quot;Maybe it’s a family… or maybe three friends who love tidy tables.&quot;)]
+    (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: $detourFollow to &quot;What if a little shadow moved inside—just a curtain fluttering in the breeze?&quot;)]
+    (else-if: $lastInterrupt is &quot;scared&quot;)[(set: $detourFollow to &quot;We can stop looking anytime. It’s okay to keep things cosy.&quot;)]
+    (else:)[(set: $detourFollow to &quot;Goldilocks lingered by the window for a moment longer.&quot;)]
+  ]
+  (else:)[
+    (set: $detourFollow to &quot;Goldilocks looked around for a moment longer.&quot;)
+  ]
+  
+      &lt;!-- Debug --&gt;
+    &lt;div style=&quot;font-size:0.8em; opacity:0.7;&quot;&gt;
+      visited count: (print:$visitedAnchors&#39;s length)&lt;br&gt;
+      visited: (print:$visitedAnchors)&lt;br&gt;
+      selected: (print:$selectedAnchor)&lt;br&gt;
+      interrupt: (print:$lastInterrupt)
+    &lt;/div&gt;
+
+  &lt;div class=&quot;anchorbox&quot;&gt;(print: $detourFollow)&lt;/div&gt;
+
+  (text-color:&quot;#888&quot;)[&quot;Shall we see what happens next?&quot;]
+  
+
+  (link: &quot;Back to the story&quot;)[
+    (set: $detourText to $detourText + &quot;&lt;br&gt;&lt;br&gt;&quot; + $detourFollow)
+    (goto: &quot;Cottage&quot;)
+  ]
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name="StoryInit" tags="startup" position="500,100" size="100,100">:: StoryInit
+(set: $mode to &quot;solo&quot;)
+(set: $anchors to (a:&quot;door&quot;,&quot;chimney&quot;,&quot;window&quot;))
+(set: $visitedAnchors to (a:))
+(set: $selectedAnchor to &quot;&quot;)
+(set: $lastInterrupt to &quot;&quot;)
+(set: $detourText to &quot;&quot;)
+(set: $detourFollow to &quot;&quot;)
+(set: $detourTurns to 0)
+
+</tw-passagedata><tw-passagedata pid="6" name="Kitchen" tags="" position="675,525" size="100,100">(set: $anchors to (a:&quot;big bowl&quot;,&quot;medium bowl&quot;,&quot;small bowl&quot;))
+(set: $visitedAnchors to (a:))
+(set: $detourText to &quot;&quot;)
+&lt;div class=&quot;scene&quot;&gt;
+  &lt;div class=&quot;sidebar&quot;&gt;
+    (link: &quot;👀 Look closer&quot;)[
+      (set: $lastInterrupt to &quot;look&quot;)
+      (goto: &quot;Kitchen_SelectAnchor&quot;)
+    ]
+    (link: &quot;💭 Imagine&quot;)[
+      (set: $lastInterrupt to &quot;imagine&quot;)
+      (goto: &quot;Kitchen_SelectAnchor&quot;)
+    ]
+    (link: &quot;❓ Ask&quot;)[
+      (set: $lastInterrupt to &quot;ask&quot;)
+      (goto: &quot;Kitchen_SelectAnchor&quot;)
+    ]
+    (link: &quot;😟 I&#39;m scared&quot;)[
+      (set: $lastInterrupt to &quot;scared&quot;)
+      (goto: &quot;Kitchen_SelectAnchor&quot;)
+    ]
+  &lt;/div&gt;
+  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.midjourney.com/33793e54-e9b0-4bc7-bc6f-79fdc0b7655b/0_1.jpeg&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+    Three bowls of porridge sat on the table.
+    (if: $detourText is not &quot;&quot;)[
+      &lt;div class=&quot;anchorbox&quot;&gt;
+        (print: $detourText)
+      &lt;/div&gt;
+    ]
+    (if: $visitedAnchors&#39;s length &gt;= 2)[
+      (link: &quot;She decided to go inside…&quot;)[
+        (set: $detourText to &quot;&quot;)
+        (set: $selectedAnchor to &quot;&quot;)
+        (set: $lastInterrupt to &quot;&quot;)
+        (set: $detourTurns to 0)
+        (goto: &quot;Bedroom&quot;)
+      ]
+    ](else:)[
+      (text-color:&quot;#888&quot;)[Take a quick look around first.]
+    ]
+  &lt;/div&gt;
+  &lt;div style=&quot;font-size:0.8em; opacity:0.7;&quot;&gt;
+    visited count: (print: $visitedAnchors&#39;s length)&lt;br&gt;
+    visited: (print: $visitedAnchors)&lt;br&gt;
+    selected: (print: $selectedAnchor)&lt;br&gt;
+    interrupt: (print: $lastInterrupt)
+  &lt;/div&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="7" name="Kitchen_SelectAnchor" tags="" position="825,525" size="100,100">&lt;!--SOLO: pick one anchor, prefer unvisited --&gt;
+(set: _opts to (a:))
+
+(for: each _a, ...$anchors)[
+  (if: not($visitedAnchors contains _a))[
+    (set: _opts to _opts + (a:_a))
+  ]
+]
+
+(if: _opts&#39;s length &gt; 0)[
+  (set: $selectedAnchor to (either: ..._opts))
+]
+(else:)[
+  (set: $selectedAnchor to (either: ...$anchors))
+]
+
+(goto: &quot;Kitchen_Detour&quot;)</tw-passagedata><tw-passagedata pid="8" name="Kitchen_Detour" tags="" position="675,675" size="100,100">  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.midjourney.com/33793e54-e9b0-4bc7-bc6f-79fdc0b7655b/0_1.jpeg&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+(if: not($visitedAnchors contains $selectedAnchor))[
+  (set: $visitedAnchors to it + (a:$selectedAnchor))
+]
+    
+(set: _maxTurns to 2)
+(set: _turn to $detourTurns + 1)
+(set: _t to &quot;&quot;)
+
+&lt;!--Ensure visitedAnchors updates AFTER an anchor is chosen --&gt;
+(if: $selectedAnchor is &quot;&quot;)[
+  (set: $detourText to &quot;No anchor was selected. Try choosing an anchor again.&quot;)
+  (goto: &quot;Kitchen&quot;)
+]
+
+&lt;!-- Add to visited (no duplicates) --&gt;
+(if: not($visitedAnchors contains $selectedAnchor))[
+  (set: $visitedAnchors to $visitedAnchors + (a: $selectedAnchor))
+]
+
+&lt;!--Text generation (safe: includes fallback) --&gt;
+(if: $selectedAnchor is &quot;big bowl&quot;)[
+  (if: $lastInterrupt is &quot;look&quot;)[(set: _t to &quot;The big bowl was huge. Steam curled up from the porridge like a tiny cloud. Goldilocks leaned closer. It smelled warm… but maybe a little too hot.&quot;)]
+  (else-if: $lastInterrupt is &quot;ask&quot;)[(set: _t to &quot;That bowl belonged to Papa Bear. Papa Bear liked everything big, big bowls, big chairs, and big breakfasts.&quot;)]
+  (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: _t to &quot;What if Papa Bear came back right now? His big footsteps would thump on the floor and the spoons would rattle on the table!&quot;)]
+  (else-if: $lastInterrupt is &quot;scared&quot;)[(set: _t to &quot;The kitchen felt very quiet. But Goldilocks could hear birds outside and the wind in the trees. Nothing scary at all.&quot;)]
+  (else:)[(set: _t to &quot;Goldilocks looked at the door for a moment.&quot;)]
+]
+(else-if: $selectedAnchor is &quot;medium bowl&quot;)[
+  (if: $lastInterrupt is &quot;look&quot;)[(set: _t to &quot;The middle bowl sat neatly beside the big one.The porridge looked smooth and creamy, and a spoon rested carefully inside.&quot;)]
+  (else-if: $lastInterrupt is &quot;ask&quot;)[(set: _t to &quot;That bowl belonged to Mama Bear. Mama Bear liked things tidy, and she always set the table just right.&quot;)]
+  (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: _t to &quot;Maybe Mama Bear had stirred the porridge slowly and hummed a little song while cooking.&quot;)]
+  (else-if: $lastInterrupt is &quot;scared&quot;)[(set: _t to &quot;The kitchen was calm and warm.
+It didn’t feel like a scary place, just a quiet one.&quot;)]
+  (else:)[(set: _t to &quot;Goldilocks watched the chimney for a moment.&quot;)]
+]
+(else-if: $selectedAnchor is &quot;small bowl&quot;)[
+  (if: $lastInterrupt is &quot;look&quot;)[(set: _t to &quot;The smallest bowl looked just right for a little bear. The porridge had cooled enough that the steam was almost gone.&quot;)]
+  (else-if: $lastInterrupt is &quot;ask&quot;)[(set: _t to &quot;That bowl belonged to Baby Bear. Baby Bear liked porridge best when it wasn’t too hot and not too cold.&quot;)]
+  (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: _t to &quot;Maybe Baby Bear had been excited for breakfast and was bouncing in his chair waiting to eat.&quot;)]
+  (else-if: $lastInterrupt is &quot;scared&quot;)[(set: _t to &quot;A tiny spoon rested beside the bowl.
+It made the kitchen feel friendly, like someone small lived here.&quot;)]
+  (else:)[(set: _t to &quot;Goldilocks glanced at the window for a moment.&quot;)]
+]
+(else:)[
+  (set: _t to &quot;Goldilocks paused and looked around the cottage.&quot;)
+]
+
+(set: $detourText to _t)
+
+&lt;div class=&quot;anchorbox&quot;&gt;$detourText&lt;/div&gt;
+
+    &lt;!-- Debug --&gt;
+    &lt;div style=&quot;font-size:0.8em; opacity:0.7;&quot;&gt;
+      visited count: (print:$visitedAnchors&#39;s length)&lt;br&gt;
+      visited: (print:$visitedAnchors)&lt;br&gt;
+      selected: (print:$selectedAnchor)&lt;br&gt;
+      interrupt: (print:$lastInterrupt)
+    &lt;/div&gt;
+
+&lt;!--Turn options --&gt;
+(if: _turn &lt; _maxTurns)[
+  (link: &quot;One more thought&quot;)[
+    (set: $detourTurns to _turn)
+    (goto: &quot;Kitchen_Detour_FollowUp&quot;)
+  ]
+  (link: &quot;Back to the story&quot;)[
+    (set: $detourTurns to 0)
+    (goto: &quot;Kitchen&quot;)
+  ]
+]
+(else:)[
+  (text-color:&quot;#888&quot;)[Shall we see what happens next?]
+  (link: &quot;Back to the story&quot;)[
+    (set: $detourTurns to 0)
+    (goto: &quot;Kitchen&quot;)
+  ]
+]</tw-passagedata><tw-passagedata pid="9" name="Kitchen_Detour_FollowUp" tags="" position="825,725" size="100,100">&lt;div class=&quot;main&quot;&gt;
+  &lt;div style=&quot;text-align:center;&quot;&gt;
+    &lt;img src=&quot;https://cdn.midjourney.com/33793e54-e9b0-4bc7-bc6f-79fdc0b7655b/0_1.jpeg&quot; width=&quot;800&quot;&gt;
+  &lt;/div&gt;
+
+  (set: $detourFollow to &quot;&quot;)
+
+  (if: $selectedAnchor is &quot;big bowl&quot;)[
+    (if: $lastInterrupt is &quot;look&quot;)[(set: $detourFollow to &quot;Goldilocks leaned even closer to the big bowl.
+The porridge bubbled gently, still far too hot to eat.&quot;)]
+    (else-if: $lastInterrupt is &quot;ask&quot;)[(set: $detourFollow to &quot;Papa Bear liked his porridge piping hot.
+He always said it woke him up properly in the morning.&quot;)]
+    (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: $detourFollow to &quot;Maybe Papa Bear would stomp into the kitchen soon saying,
+“Who’s been looking at my porridge?”&quot;)]
+    (else-if: $lastInterrupt is &quot;scared&quot;)[(set: $detourFollow to &quot;The house was still quiet.
+Just the creak of wood and the whisper of wind outside.&quot;)]
+    (else:)[(set: $detourFollow to &quot;Goldilocks stayed near the door for a moment longer.&quot;)]
+  ]
+  (else-if: $selectedAnchor is &quot;medium bowl&quot;)[
+    (if: $lastInterrupt is &quot;look&quot;)[(set: $detourFollow to &quot;The middle bowl looked perfectly neat.
+The spoon was resting carefully beside it.&quot;)]
+    (else-if: $lastInterrupt is &quot;ask&quot;)[(set: $detourFollow to &quot;Mama Bear liked everything just right.
+Not too big, not too small.&quot;)]
+    (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: $detourFollow to &quot;Maybe Mama Bear had tasted the porridge and smiled, proud of her cooking.&quot;)]
+    (else-if: $lastInterrupt is &quot;scared&quot;)[(set: $detourFollow to &quot;The warm kitchen felt cosy, like a place where families sit together.&quot;)]
+    (else:)[(set: $detourFollow to &quot;Goldilocks watched the chimney for a moment longer.&quot;)]
+  ]
+  (else-if: $selectedAnchor is &quot;small bowl&quot;)[
+    (if: $lastInterrupt is &quot;look&quot;)[(set: $detourFollow to &quot;The little bowl looked just right for someone small.
+The porridge inside had cooled nicely.&quot;)]
+    (else-if: $lastInterrupt is &quot;ask&quot;)[(set: $detourFollow to &quot;Baby Bear’s bowl was the smallest because he was still growing. Like you.&quot;)]
+    (else-if: $lastInterrupt is &quot;imagine&quot;)[(set: $detourFollow to &quot;Maybe Baby Bear was telling Mama and Papa Bear what games he wanted to play today?&quot;)]
+    (else-if: $lastInterrupt is &quot;scared&quot;)[(set: $detourFollow to &quot;The tiny spoon beside the bowl made the kitchen feel friendly.&quot;)]
+    (else:)[(set: $detourFollow to &quot;Goldilocks lingered by the window for a moment longer.&quot;)]
+  ]
+  (else:)[
+    (set: $detourFollow to &quot;Goldilocks looked around for a moment longer.&quot;)
+  ]
+  
+      &lt;!-- Debug --&gt;
+    &lt;div style=&quot;font-size:0.8em; opacity:0.7;&quot;&gt;
+      visited count: (print:$visitedAnchors&#39;s length)&lt;br&gt;
+      visited: (print:$visitedAnchors)&lt;br&gt;
+      selected: (print:$selectedAnchor)&lt;br&gt;
+      interrupt: (print:$lastInterrupt)
+    &lt;/div&gt;
+
+  &lt;div class=&quot;anchorbox&quot;&gt;(print: $detourFollow)&lt;/div&gt;
+
+  (text-color:&quot;#888&quot;)[&quot;Shall we see what happens next?&quot;]
+  
+
+  (link: &quot;Back to the story&quot;)[
+    (set: $detourText to $detourText + &quot;&lt;br&gt;&lt;br&gt;&quot; + $detourFollow)
+    (goto: &quot;Bedroom&quot;)
+  ]
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="Bedroom" tags="" position="950,900" size="100,100"></tw-passagedata></tw-storydata>
+
+<tw-storydata name="JOMQ_v2" startnode="4" creator="Twine" creator-version="2.11.1" format="Harlowe" format-version="3.3.9" ifid="50B215BA-CA95-4ECD-9C1D-07E79A86B47A" options="" tags="solo" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* Page layout */
+tw-story {
+  background: #1a1a2e;
+}
+
+tw-passage {
+  font-size: 24px;
+  line-height: 1.7;
+  max-width: 650px;
+  margin: auto;
+  padding: 20px;
+  color: #f0e6d3;
+  font-family: Georgia, serif;
+}
+
+/* Story text panel */
+.story-text {
+  background: rgba(0,0,0,0.25);
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 650px;
+  margin: auto;
+}
+
+/* All links become buttons */
+tw-link, .enchantment-link {
+  display: block;
+  width: 220px;
+  margin: 12px auto;
+  padding: 14px;
+  background: #F6E6C9;
+  border-radius: 12px;
+  font-size: 20px;
+  text-align: center;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+tw-link:hover, .enchantment-link:hover {
+  background: #e8d4a8;
+}
+
+/* Images */
+img {
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+/* Detour text box */
+.anchorbox {
+  background: #2a2a4a;
+  border-left: 4px solid #F6E6C9;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-style: italic;
+}
+
+/* Interrupt button prompt */
+.interrupt-prompt {
+  text-align: center;
+  color: #e8dcc2;
+  font-size: 18px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+/* Interrupt circle buttons - must come AFTER global tw-link rules */
+.interrupt-group {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 16px;
+  margin: 0px auto;
+}
+
+.interrupt-group tw-link,
+.interrupt-group .enchantment-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100px !important;
+  height: 100px !important;
+  border-radius: 50% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 50px !important;
+  background: #F6E6C9 !important;
+}
+
+.interrupt-group tw-consecutive-br {
+  display: none !important;
+}
+
+.action-group {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px auto;
+}
+
+.action-group tw-link,
+.action-group .enchantment-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  padding: 14px 20px !important;
+  margin: 0 !important;
+}
+
+.action-group tw-consecutive-br {
+  display: none !important;
+}</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-tag name="startup" color="yellow"></tw-tag><tw-passagedata pid="1" name="Cottage" tags="" position="575,300" size="100,100">(set: $scene to &quot;Cottage&quot;)(set: $anchors to (a:&quot;door&quot;,&quot;chimney&quot;,&quot;window&quot;))(if: (datatype: $visitedAnchors) is not &quot;array&quot;)[(set: $visitedAnchors to (a:))](if: (datatype: $scenePrev) is not &quot;string&quot;)[(set: $scenePrev to &quot;Cottage&quot;)](if: $scenePrev is not &quot;Cottage&quot;)[(set: $visitedAnchors to (a:))(set: $detourText to &quot;&quot;)(set: $detourFollowText to &quot;&quot;)(set: $detourTurns to 0)(set: $detourCount to 0)(set: $scenePrev to &quot;Cottage&quot;)]
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; width=&quot;800&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;story-text&quot;&gt;
+Deep in the forest, Goldilocks was walking along a quiet path.
+Soon she came to a small wooden cottage.
+Smoke curled gently from the chimney.
+Goldilocks looked at the door.
+She peered through the window.
+And she wondered who might live inside.
+(if: $detourText&#39;s length &gt; 0)[
+(print: $detourText)
+(print: $detourFollowText)
+(if: $detourTurns &lt; 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;One more thought…&quot;)[(goto: &quot;DetourFollowUp&quot;)]
+(link: &quot;Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+(if: $detourTurns &gt;= 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+]
+&lt;/div&gt;
+(if: $detourText&#39;s length is 0)[
+(if: $detourCount &lt; 2)[
+&lt;div class=&quot;interrupt-prompt&quot;&gt;What do you want to do?&lt;/div&gt;
+&lt;div class=&quot;interrupt-group&quot;&gt;
+(link: &quot;👀&quot;)[(goto: &quot;Interrupt_Look&quot;)]
+(link: &quot;💭&quot;)[(goto: &quot;Interrupt_Imagine&quot;)]
+(link: &quot;❓&quot;)[(goto: &quot;Interrupt_Ask&quot;)]
+(link: &quot;😟&quot;)[(goto: &quot;Interrupt_Scared&quot;)]
+&lt;/div&gt;
+]
+]
+
+(if: $detourCount &gt;= 2)[
+  (if: $detourText&#39;s length is 0)[
+    (link: &quot;She decided to go inside…&quot;)[
+      (set: $detourText to &quot;&quot;)
+      (set: $selectedAnchor to &quot;&quot;)
+      (set: $lastInterrupt to &quot;&quot;)
+      (set: $detourTurns to 0)
+      (set: $detourCount to 0)
+      (goto: &quot;Kitchen&quot;)
+    ]
+  ]
+]
+
+(if: $detourCount &lt; 2)[
+  (if: $detourText&#39;s length is 0)[
+    (text-color: &quot;#888&quot;)[Take a quick look around first.]
+  ]
+]</tw-passagedata><tw-passagedata pid="2" name="SelectAnchor" tags="" position="900,250" size="100,100">:: SelectAnchor
+(set: _opts to (a:))
+(for: each _a, ...$anchors)[
+  (if: not($visitedAnchors contains _a))[
+    (set: _opts to _opts + (a:_a))
+  ]
+]
+(if: _opts&#39;s length &gt; 0)[
+  (set: $selectedAnchor to _opts&#39;s (random: 1, _opts&#39;s length))
+](else:)[
+  (set: $selectedAnchor to $anchors&#39;s (random: 1, $anchors&#39;s length))
+]
+(if: not($visitedAnchors contains $selectedAnchor))[
+  (set: $visitedAnchors to $visitedAnchors + (a:$selectedAnchor))
+]
+(if: (datatype: $selectedAnchor) is not &quot;string&quot;)[
+  (set: $selectedAnchor to $anchors&#39;s 1st)
+]
+(set: $detourTurns to 0)
+(goto: &quot;Detour&quot;)</tw-passagedata><tw-passagedata pid="3" name="Detour" tags="" position="900,400" size="100,100">:: Detour
+(set: _sceneData to $detours&#39;s $scene)
+(set: _anchorData to _sceneData&#39;s $selectedAnchor)
+(if: $lastInterrupt is &quot;look&quot;)[(set: $detourText to _anchorData&#39;s &quot;look&quot;)(set: $savedInterrupt to &quot;look&quot;)]
+(if: $lastInterrupt is &quot;imagine&quot;)[(set: $detourText to _anchorData&#39;s &quot;imagine&quot;)(set: $savedInterrupt to &quot;imagine&quot;)]
+(if: $lastInterrupt is &quot;ask&quot;)[(set: $detourText to _anchorData&#39;s &quot;ask&quot;)(set: $savedInterrupt to &quot;ask&quot;)]
+(if: $lastInterrupt is &quot;scared&quot;)[(set: $detourText to _anchorData&#39;s &quot;scared&quot;)(set: $savedInterrupt to &quot;scared&quot;)]
+(goto: $scene)</tw-passagedata><tw-passagedata pid="4" name="init" tags="" position="900,100" size="100,100">
+(set: $mode to &quot;solo&quot;)
+(set: $scene to &quot;&quot;)
+(set: $scenePrev to &quot;&quot;)
+(set: $visitedAnchors to (a:))
+(set: $selectedAnchor to &quot;&quot;)
+(set: $lastInterrupt to &quot;&quot;)
+(set: $savedInterrupt to &quot;&quot;)
+(set: $detourText to &quot;&quot;)
+(set: $detourFollowText to &quot;&quot;)
+(set: $detourTurns to 0)
+(set: $detourCount to 0)
+(set: $detours to (dm:
+&quot;Kitchen&quot;, (dm:
+  &quot;big bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The big bowl was huge. Steam curled up like a tiny cloud.&quot;,
+    &quot;ask&quot;, &quot;That bowl belongs to Papa Bear. He likes everything big.&quot;,
+    &quot;imagine&quot;, &quot;What if heavy footsteps thumped down the hallway?&quot;,
+    &quot;scared&quot;, &quot;The kitchen is quiet. Nothing scary is happening.&quot;
+  ),
+  &quot;medium bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The middle bowl looked neat and smooth.&quot;,
+    &quot;ask&quot;, &quot;That bowl belongs to Mama Bear.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Mama Bear hummed while stirring the porridge.&quot;,
+    &quot;scared&quot;, &quot;The kitchen feels warm and calm.&quot;
+  ),
+  &quot;small bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The smallest bowl had cooled nicely.&quot;,
+    &quot;ask&quot;, &quot;That bowl belongs to Baby Bear.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear bounced in his chair waiting for breakfast.&quot;,
+    &quot;scared&quot;, &quot;A tiny spoon makes the room feel friendly.&quot;
+  )
+),
+&quot;Cottage&quot;, (dm:
+  &quot;door&quot;, (dm:
+    &quot;look&quot;, &quot;The wooden door looked old but strong.&quot;,
+    &quot;ask&quot;, &quot;Who might live in a cottage deep in the forest?&quot;,
+    &quot;imagine&quot;, &quot;What if the door creaked open slowly?&quot;,
+    &quot;scared&quot;, &quot;We don&#39;t have to go inside yet.&quot;
+  ),
+  &quot;chimney&quot;, (dm:
+    &quot;look&quot;, &quot;Smoke curled gently from the chimney.&quot;,
+    &quot;ask&quot;, &quot;Someone must be cooking inside.&quot;,
+    &quot;imagine&quot;, &quot;The smoke drifted into the sky like a cloud.&quot;,
+    &quot;scared&quot;, &quot;Warm smoke means a cosy home.&quot;
+  ),
+  &quot;window&quot;, (dm:
+    &quot;look&quot;, &quot;Through the window she saw a table with three bowls.&quot;,
+    &quot;ask&quot;, &quot;Why are there three bowls?&quot;,
+    &quot;imagine&quot;, &quot;Maybe they were waiting for breakfast.&quot;,
+    &quot;scared&quot;, &quot;We are just looking from outside.&quot;
+  )
+),
+&quot;Bedroom&quot;, (dm:
+  &quot;big bed&quot;, (dm:
+    &quot;look&quot;, &quot;The biggest bed looked very tall and very wide.&quot;,
+    &quot;ask&quot;, &quot;That bed belongs to Papa Bear.&quot;,
+    &quot;imagine&quot;, &quot;What if Papa Bear stretched his big paws across the whole bed?&quot;,
+    &quot;scared&quot;, &quot;The bedroom was quiet and calm, with soft blankets and pillows.&quot;
+  ),
+  &quot;medium bed&quot;, (dm:
+    &quot;look&quot;, &quot;The middle bed had a neat blanket folded across it.&quot;,
+    &quot;ask&quot;, &quot;That bed belongs to Mama Bear.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Mama Bear fluffed the pillows before leaving the room.&quot;,
+    &quot;scared&quot;, &quot;The room felt cosy, like a place made for resting.&quot;
+  ),
+  &quot;small bed&quot;, (dm:
+    &quot;look&quot;, &quot;The smallest bed looked just right for someone little.&quot;,
+    &quot;ask&quot;, &quot;That bed belongs to Baby Bear.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear had jumped on the bed earlier that morning.&quot;,
+    &quot;scared&quot;, &quot;The soft blankets made the bed feel safe and warm.&quot;
+  )
+),
+&quot;BearsReturn&quot;, (dm:
+  &quot;stairs&quot;, (dm:
+    &quot;look&quot;, &quot;At the bottom of the stairs stood three bears, looking up quietly.&quot;,
+    &quot;ask&quot;, &quot;They had just come home from their walk in the woods.&quot;,
+    &quot;imagine&quot;, &quot;What if the stairs creaked as they slowly climbed up?&quot;,
+    &quot;scared&quot;, &quot;They looked curious more than angry.&quot;
+  ),
+  &quot;footsteps&quot;, (dm:
+    &quot;look&quot;, &quot;Heavy footsteps padded softly across the wooden floor.&quot;,
+    &quot;ask&quot;, &quot;Papa Bear&#39;s steps were big, Mama Bear&#39;s were steady, and Baby Bear&#39;s were small.&quot;,
+    &quot;imagine&quot;, &quot;Thump… step… tap… the footsteps echoed gently through the house.&quot;,
+    &quot;scared&quot;, &quot;The sounds were slow and calm, not rushing or loud.&quot;
+  ),
+  &quot;voices&quot;, (dm:
+    &quot;look&quot;, &quot;Three different voices murmured softly in the hallway.&quot;,
+    &quot;ask&quot;, &quot;They were wondering who had been in their house.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear whispered, &#39;Someone&#39;s been here!&#39;&quot;,
+    &quot;scared&quot;, &quot;Their voices sounded surprised, not scary.&quot;
+  )
+)
+))
+(set: $followups to (dm:
+&quot;Cottage&quot;, (dm:
+  &quot;door&quot;, (dm:
+    &quot;look&quot;, &quot;The handle looked shiny, like it had been used today.&quot;,
+    &quot;ask&quot;, &quot;If Goldilocks knocked, someone might answer… or the house might stay quiet.&quot;,
+    &quot;imagine&quot;, &quot;Maybe the door has a secret squeak sound—eeeek!&quot;,
+    &quot;scared&quot;, &quot;If you feel nervous, we can pause and take a slow breath.&quot;
+  ),
+  &quot;chimney&quot;, (dm:
+    &quot;look&quot;, &quot;The smoke rose slowly, like the cottage was calm.&quot;,
+    &quot;ask&quot;, &quot;If it&#39;s porridge, it might be cooling down right now.&quot;,
+    &quot;imagine&quot;, &quot;What if the smoke spelled &#39;hello&#39; in the air… then vanished?&quot;,
+    &quot;scared&quot;, &quot;Warm smells can be comforting. You&#39;re doing great.&quot;
+  ),
+  &quot;window&quot;, (dm:
+    &quot;look&quot;, &quot;The bowls inside were different sizes—big, medium, and small.&quot;,
+    &quot;ask&quot;, &quot;Maybe it&#39;s a family… or maybe three friends who love tidy tables.&quot;,
+    &quot;imagine&quot;, &quot;What if the curtain fluttered and made a moving shadow?&quot;,
+    &quot;scared&quot;, &quot;We can stop looking anytime. It&#39;s okay to keep things cosy.&quot;
+  )
+),
+&quot;Kitchen&quot;, (dm:
+  &quot;big bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The porridge bubbled gently—still far too hot.&quot;,
+    &quot;ask&quot;, &quot;Papa Bear liked his porridge piping hot to wake him up.&quot;,
+    &quot;imagine&quot;, &quot;Maybe a deep voice would boom, &#39;Who&#39;s been near my porridge?&#39;&quot;,
+    &quot;scared&quot;, &quot;It&#39;s only quiet kitchen noises. Nothing is rushing or chasing.&quot;
+  ),
+  &quot;medium bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The spoon sat carefully beside the bowl, like someone had just stood up.&quot;,
+    &quot;ask&quot;, &quot;Mama Bear liked things neat and just right.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Mama Bear smiled, proud of her cooking.&quot;,
+    &quot;scared&quot;, &quot;This feels like a family kitchen—warm, not scary.&quot;
+  ),
+  &quot;small bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The steam was almost gone now. It was ready to taste.&quot;,
+    &quot;ask&quot;, &quot;Baby Bear&#39;s bowl is small because he&#39;s still growing.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear bounced in his chair, too excited to wait.&quot;,
+    &quot;scared&quot;, &quot;The tiny spoon makes it feel friendly. You&#39;re safe.&quot;
+  )
+),
+&quot;Bedroom&quot;, (dm:
+  &quot;big bed&quot;, (dm:
+    &quot;look&quot;, &quot;The mattress looked strong and sturdy.&quot;,
+    &quot;ask&quot;, &quot;Papa Bear liked lots of space to stretch when he slept.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Papa Bear snored like a rumbling cloud.&quot;,
+    &quot;scared&quot;, &quot;The room stayed quiet and peaceful.&quot;
+  ),
+  &quot;medium bed&quot;, (dm:
+    &quot;look&quot;, &quot;The blanket lay neatly across the bed.&quot;,
+    &quot;ask&quot;, &quot;Mama Bear liked everything to be tidy.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Mama Bear hummed a lullaby while making the bed.&quot;,
+    &quot;scared&quot;, &quot;The soft pillows made the room feel gentle.&quot;
+  ),
+  &quot;small bed&quot;, (dm:
+    &quot;look&quot;, &quot;The little pillow looked soft and comfortable.&quot;,
+    &quot;ask&quot;, &quot;Baby Bear&#39;s bed was just the right size for him.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear liked to curl up like a little ball when he slept.&quot;,
+    &quot;scared&quot;, &quot;The tiny bed looked friendly and warm.&quot;
+  )
+),
+&quot;BearsReturn&quot;, (dm:
+  &quot;stairs&quot;, (dm:
+    &quot;look&quot;, &quot;The bears stood still, listening carefully.&quot;,
+    &quot;ask&quot;, &quot;They were wondering what had happened inside their house.&quot;,
+    &quot;imagine&quot;, &quot;What if they climbed the stairs very slowly… step by step?&quot;,
+    &quot;scared&quot;, &quot;They didn&#39;t sound angry, just curious.&quot;
+  ),
+  &quot;footsteps&quot;, (dm:
+    &quot;look&quot;, &quot;The footsteps paused at the bottom of the stairs.&quot;,
+    &quot;ask&quot;, &quot;Each bear had a different step — big, medium, and small.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear bounced a little as he walked.&quot;,
+    &quot;scared&quot;, &quot;The house stayed calm and quiet.&quot;
+  ),
+  &quot;voices&quot;, (dm:
+    &quot;look&quot;, &quot;The voices grew a little louder as they talked.&quot;,
+    &quot;ask&quot;, &quot;They were trying to figure out what had happened.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear said, &#39;Let&#39;s go upstairs and see!&#39;&quot;,
+    &quot;scared&quot;, &quot;Their voices still sounded gentle.&quot;
+  )
+)
+))
+
+[[Begin-&gt;Opening]]</tw-passagedata><tw-passagedata pid="5" name="DetourFollowUp" tags="" position="900,525" size="100,100">:: DetourFollowUp
+(set: _sceneData to $followups&#39;s $scene)
+(set: _anchorData to _sceneData&#39;s $selectedAnchor)
+(if: $savedInterrupt is &quot;look&quot;)[(set: $detourFollowText to _anchorData&#39;s &quot;look&quot;)]
+(if: $savedInterrupt is &quot;imagine&quot;)[(set: $detourFollowText to _anchorData&#39;s &quot;imagine&quot;)]
+(if: $savedInterrupt is &quot;ask&quot;)[(set: $detourFollowText to _anchorData&#39;s &quot;ask&quot;)]
+(if: $savedInterrupt is &quot;scared&quot;)[(set: $detourFollowText to _anchorData&#39;s &quot;scared&quot;)]
+(set: $detourTurns to $detourTurns + 1)
+(goto: $scene)</tw-passagedata><tw-passagedata pid="6" name="Interrupt_Look" tags="" position="750,200" size="100,100">:: Interrupt_Look
+(set: $lastInterrupt to (str: &quot;look&quot;))
+(goto: &quot;SelectAnchor&quot;)
+</tw-passagedata><tw-passagedata pid="7" name="Interrupt_Imagine" tags="" position="750,325" size="100,100">
+(set: $lastInterrupt to &quot;imagine&quot;)
+(goto: &quot;SelectAnchor&quot;)</tw-passagedata><tw-passagedata pid="8" name="Interrupt_Ask" tags="" position="750,450" size="100,100">
+(set: $lastInterrupt to &quot;ask&quot;)
+(goto: &quot;SelectAnchor&quot;)</tw-passagedata><tw-passagedata pid="9" name="Interrupt_Scared" tags="" position="750,575" size="100,100">
+(set: $lastInterrupt to &quot;scared&quot;)
+(goto: &quot;SelectAnchor&quot;)</tw-passagedata><tw-passagedata pid="10" name="Test" tags="" position="1025,325" size="100,100">:: Test
+it got here</tw-passagedata><tw-passagedata pid="11" name="Kitchen" tags="" position="575,425" size="100,100">(set: $scene to &quot;Kitchen&quot;)(set: $anchors to (a:&quot;big bowl&quot;,&quot;medium bowl&quot;,&quot;small bowl&quot;))(if: (datatype: $visitedAnchors) is not &quot;array&quot;)[(set: $visitedAnchors to (a:))](if: (datatype: $scenePrev) is not &quot;string&quot;)[(set: $scenePrev to &quot;Kitchen&quot;)](if: $scenePrev is not &quot;Kitchen&quot;)[(set: $visitedAnchors to (a:))(set: $detourText to &quot;&quot;)(set: $detourFollowText to &quot;&quot;)(set: $detourTurns to 0)(set: $detourCount to 0)(set: $scenePrev to &quot;Kitchen&quot;)]
+
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;img src=&quot;https://cdn.midjourney.com/33793e54-e9b0-4bc7-bc6f-79fdc0b7655b/0_1.jpeg&quot; width=&quot;800&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;story-text&quot;&gt;
+On the table were three bowls of porridge.
+One bowl was very big.
+One bowl was medium-sized.
+And one bowl was very small.
+Goldilocks was feeling quite hungry.
+(if: $detourText&#39;s length &gt; 0)[
+  (print: $detourText)
+
+  (print: $detourFollowText)
+
+(if: $detourTurns &lt; 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;One more thought…&quot;)[(goto: &quot;DetourFollowUp&quot;)]
+(link: &quot;Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+(if: $detourTurns &gt;= 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+]
+&lt;/div&gt;
+(if: $detourText&#39;s length is 0)[
+  (if: $detourCount &lt; 2)[
+    &lt;div class=&quot;interrupt-prompt&quot;&gt;What do you want to do?&lt;/div&gt;
+&lt;div class=&quot;interrupt-group&quot;&gt;
+(link: &quot;👀&quot;)[(goto: &quot;Interrupt_Look&quot;)]
+(link: &quot;💭&quot;)[(goto: &quot;Interrupt_Imagine&quot;)]
+(link: &quot;❓&quot;)[(goto: &quot;Interrupt_Ask&quot;)]
+(link: &quot;😟&quot;)[(goto: &quot;Interrupt_Scared&quot;)]
+&lt;/div&gt;
+  ]
+]
+
+(if: $detourCount &gt;= 2)[
+  (if: $detourText&#39;s length is 0)[
+    (link: &quot;Goldilocks went to explore…&quot;)[
+      (set: $detourText to &quot;&quot;)
+      (set: $selectedAnchor to &quot;&quot;)
+      (set: $lastInterrupt to &quot;&quot;)
+      (set: $detourTurns to 0)
+      (set: $detourCount to 0)
+      (goto: &quot;Bedroom&quot;)
+    ]
+  ]
+]
+
+(if: $detourCount &lt; 2)[
+  (if: $detourText&#39;s length is 0)[
+    (text-color: &quot;#888&quot;)[Take a quick look around first.]
+  ]
+]</tw-passagedata><tw-passagedata pid="12" name="Bedroom" tags="" position="575,550" size="100,100">(set: $scene to &quot;Bedroom&quot;)(set: $anchors to (a:&quot;big bed&quot;,&quot;medium bed&quot;,&quot;small bed&quot;))(if: (datatype: $visitedAnchors) is not &quot;array&quot;)[(set: $visitedAnchors to (a:))](if: (datatype: $scenePrev) is not &quot;string&quot;)[(set: $scenePrev to &quot;Bedroom&quot;)](if: $scenePrev is not &quot;Bedroom&quot;)[(set: $visitedAnchors to (a:))(set: $detourText to &quot;&quot;)(set: $detourFollowText to &quot;&quot;)(set: $detourTurns to 0)(set: $detourCount to 0)(set: $scenePrev to &quot;Bedroom&quot;)]
+
+  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.midjourney.com/c1dfbf9b-7753-4923-aa3b-c0f9a229aa6d/0_0.jpeg&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+Goldilocks climbed the stairs and found a bedroom.
+
+Inside were three beds.
+
+One bed was very big.
+
+One bed was medium-sized.
+
+And one bed was very small.
+
+Goldilocks was feeling very sleepy now.
+
+(if: $detourText&#39;s length &gt; 0)[
+  (print: $detourText)
+
+  (print: $detourFollowText)
+
+(print: $detourFollowText)
+(if: $detourTurns &lt; 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;One more thought…&quot;)[(goto: &quot;DetourFollowUp&quot;)]
+(link: &quot;Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+(if: $detourTurns &gt;= 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+]
+&lt;/div&gt;
+(if: $detourText&#39;s length is 0)[
+  (if: $detourCount &lt; 2)[
+    &lt;div class=&quot;interrupt-prompt&quot;&gt;What do you want to do?&lt;/div&gt;
+&lt;div class=&quot;interrupt-group&quot;&gt;
+(link: &quot;👀&quot;)[(goto: &quot;Interrupt_Look&quot;)]
+(link: &quot;💭&quot;)[(goto: &quot;Interrupt_Imagine&quot;)]
+(link: &quot;❓&quot;)[(goto: &quot;Interrupt_Ask&quot;)]
+(link: &quot;😟&quot;)[(goto: &quot;Interrupt_Scared&quot;)]
+&lt;/div&gt;
+  ]
+]
+
+(if: $detourCount &gt;= 2)[
+  (if: $detourText&#39;s length is 0)[
+    (link: &quot;And then the Bear&#39;s returned…&quot;)[
+      (set: $detourText to &quot;&quot;)
+      (set: $selectedAnchor to &quot;&quot;)
+      (set: $lastInterrupt to &quot;&quot;)
+      (set: $detourTurns to 0)
+      (set: $detourCount to 0)
+      (goto: &quot;BearsReturn&quot;)
+    ]
+  ]
+]
+
+(if: $detourCount &lt; 2)[
+  (if: $detourText&#39;s length is 0)[
+    (text-color: &quot;#888&quot;)[Take a quick look around first.]
+  ]
+]</tw-passagedata><tw-passagedata pid="13" name="BearsReturn" tags="" position="575,675" size="100,100">(set: $scene to &quot;BearsReturn&quot;)(set: $anchors to (a:&quot;stairs&quot;,&quot;footsteps&quot;,&quot;voices&quot;))(if: (datatype: $visitedAnchors) is not &quot;array&quot;)[(set: $visitedAnchors to (a:))](if: (datatype: $scenePrev) is not &quot;string&quot;)[(set: $scenePrev to &quot;BearsReturn&quot;)](if: $scenePrev is not &quot;BearsReturn&quot;)[(set: $visitedAnchors to (a:))(set: $detourText to &quot;&quot;)(set: $detourFollowText to &quot;&quot;)(set: $detourTurns to 0)(set: $detourCount to 0)(set: $scenePrev to &quot;BearsReturn&quot;)]
+
+  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.discordapp.com/attachments/1248677589523108000/1479107024334749706/Just_One_More_Question_-_Bears_Return_Stairs_Pacing.png?ex=69ad7843&amp;is=69ac26c3&amp;hm=98fb1a35ac4a6360cb615ce0eeb565dea5c70e98f0b9c486bcaa00c7ead79163&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+Just then, the three bears came home from their walk in the forest.
+
+Papa Bear sniffed the air.
+
+“Someone’s been eating my porridge!” he said in his big voice.
+
+Mama Bear looked at the table.
+
+“Someone’s been eating my porridge too!”
+
+Then Baby Bear peered into his little bowl.
+
+“Someone’s been eating my porridge… and they ate it all up!”
+
+The bears looked around the kitchen. Something wasn’t right.
+
+Slowly, they walked toward the stairs and looked up.
+
+(if: $detourText&#39;s length &gt; 0)[
+  (print: $detourText)
+
+  (print: $detourFollowText)
+
+(print: $detourFollowText)
+(if: $detourTurns &lt; 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;One more thought…&quot;)[(goto: &quot;DetourFollowUp&quot;)]
+(link: &quot;Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+(if: $detourTurns &gt;= 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+]
+&lt;/div&gt;
+(if: $detourText&#39;s length is 0)[
+  (if: $detourCount &lt; 2)[
+    &lt;div class=&quot;interrupt-prompt&quot;&gt;What do you want to do?&lt;/div&gt;
+&lt;div class=&quot;interrupt-group&quot;&gt;
+(link: &quot;👀&quot;)[(goto: &quot;Interrupt_Look&quot;)]
+(link: &quot;💭&quot;)[(goto: &quot;Interrupt_Imagine&quot;)]
+(link: &quot;❓&quot;)[(goto: &quot;Interrupt_Ask&quot;)]
+(link: &quot;😟&quot;)[(goto: &quot;Interrupt_Scared&quot;)]
+&lt;/div&gt;
+  ]
+]
+
+(if: $detourCount &gt;= 2)[
+  (if: $detourText&#39;s length is 0)[
+    (link: &quot;They went up the stairs…&quot;)[
+      (set: $detourText to &quot;&quot;)
+      (set: $selectedAnchor to &quot;&quot;)
+      (set: $lastInterrupt to &quot;&quot;)
+      (set: $detourTurns to 0)
+      (set: $detourCount to 0)
+      (goto: &quot;Climax&quot;)
+    ]
+  ]
+]
+
+(if: $detourCount &lt; 2)[
+  (if: $detourText&#39;s length is 0)[
+    (text-color: &quot;#888&quot;)[Take a quick look around first.]
+  ]
+]</tw-passagedata><tw-passagedata pid="14" name="Climax" tags="" position="575,800" size="100,100">:: Climax
+(set: $scene to &quot;Climax&quot;)
+
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.discordapp.com/attachments/1248677589523108000/1479108209754243072/Copy_of_Untitled.png?ex=69ad795d&amp;is=69ac27dd&amp;hm=78b66c38ad2577dc52a6e754a31f0ddd7f42657dc9664e709349917acad426be&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+Papa Bear looked at his bed.
+
+&quot;Someone&#39;s been sleeping in my bed!&quot; he said.
+
+Mama Bear looked at her bed.
+
+&quot;Someone&#39;s been sleeping in my bed too!&quot;
+
+Then Baby Bear looked at his little bed.
+
+&quot;Someone&#39;s been sleeping in my bed — and here she is!&quot;
+
+Goldilocks woke up with a start. Three bears were standing beside the bed. Her eyes grew wide.
+
+What do you think happens next?
+
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;🏃 Goldilocks runs away&quot;)[
+  (goto: &quot;EndingRun&quot;)
+]
+(link: &quot;🙏 Goldilocks says sorry&quot;)[
+  (goto: &quot;EndingApology&quot;)
+]
+(link: &quot;🫣 Goldilocks hides&quot;)[
+  (goto: &quot;EndingHide&quot;)
+]
+
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="15" name="BackToStory" tags="" position="750,700" size="100,100">:: BackToStory
+(set: $detourText to &quot;&quot;)
+(set: $detourFollowText to &quot;&quot;)
+(set: $detourTurns to 0)
+(set: $detourCount to $detourCount + 1)
+(goto: $scene)</tw-passagedata><tw-passagedata pid="16" name="EndingRun" tags="" position="450,925" size="100,100">:: EndingRun
+Goldilocks jumped out of bed and ran down the stairs, through the kitchen, and out of the cottage door.
+
+She ran all the way through the forest until she reached home.
+
+
+(link: &quot;And she never went into someone else&#39;s house again.&quot;)[(goto: &quot;Closing&quot;)]</tw-passagedata><tw-passagedata pid="17" name="EndingApology" tags="" position="575,925" size="100,100">:: EndingApology
+Goldilocks sat up slowly and looked at the three bears.
+
+&quot;I&#39;m sorry,&quot; she said quietly.
+
+Papa Bear folded his arms. Mama Bear thought for a moment.
+
+Baby Bear said, &quot;Maybe next time you should knock first.&quot;
+
+
+(link: &quot;Goldilocks nodded. And she promised to remember.&quot;)[(goto: &quot;Closing&quot;)]</tw-passagedata><tw-passagedata pid="18" name="EndingHide" tags="" position="700,925" size="100,100">:: EndingHide
+Goldilocks hid under the blanket as quietly as she could.
+
+The bears looked at the little bed. The blanket wriggled.
+
+Baby Bear giggled. &quot;I think someone&#39;s hiding in my bed!&quot;
+
+
+(link: &quot;Goldilocks peeked out, and everyone laughed.&quot;)[(goto: &quot;Closing&quot;)]</tw-passagedata><tw-passagedata pid="19" name="Opening" tags="" position="575,175" size="100,100">  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; style=&quot;opacity:0.85;&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+Once upon a time, deep in a quiet forest, there was a little wooden cottage.
+
+Inside the cottage lived three bears.
+Papa Bear, Mama Bear, and Baby Bear.
+
+One morning they made some warm porridge for breakfast.
+But it was too hot to eat!
+
+So the three bears went for a walk in the forest while it cooled down.
+
+(link: &quot;And while they were gone… someone else arrived.&quot;)[(goto: &quot;Cottage&quot;)]</tw-passagedata><tw-passagedata pid="20" name="Closing" tags="" position="575,1100" size="100,100">&lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; width=&quot;800&quot;
+style=&quot;filter: sepia(0.35) brightness(0.85) saturate(1.1);&quot;&gt;
+
+And that was the end of Goldilocks&#39; very surprising day.
+
+
+
+Some stories end with running.
+
+Some stories end with hiding.
+
+And some stories end with saying sorry.
+
+
+
+But every story ends the same way.
+
+The forest grows quiet.
+
+The cottage becomes still.
+
+And the sun slowly slips behind the trees.
+
+
+
+Maybe the bears finished their porridge.
+
+Maybe Goldilocks went safely home.
+
+Maybe tomorrow there will be another story.
+
+
+
+Goodnight, little storyteller.
+
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;Play again?&quot;)[(goto: &quot;Opening&quot;)]
+(link: &quot;Choose another story&quot;)[(goto: &quot;Placeholder&quot;)]
+(link: &quot;Goodnight&quot;)[(goto: &quot;Goodnight&quot;)]
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="21" name="Placeholder" tags="" position="700,1075" size="100,100">There will be more stories here soon.
+
+Maybe one about a wolf and three little pigs.
+
+Or a girl in a red cloak walking through the forest.
+
+But for now, Goldilocks is the only story ready.
+
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;Play again?&quot;)[(goto: &quot;Opening&quot;)]
+(link: &quot;Goodnight&quot;)[(goto: &quot;Goodnight&quot;)]
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="22" name="Goodnight" tags="" position="700,1200" size="100,100">And that was the end of Goldilocks’ very surprising day.
+
+The forest grows quiet.
+The cottage becomes still.
+
+Stories change when someone asks questions.
+
+And tonight…
+you helped tell this one.
+
+Goodnight, little storyteller.
+
+(link: &quot;Play again?&quot;)[(goto: &quot;Opening&quot;)]</tw-passagedata></tw-storydata>
+
+<tw-storydata name="JOMQ_v3" startnode="" creator="Twine" creator-version="2.11.1" format="Harlowe" format-version="3.3.9" ifid="6eabf1b8-2ca9-4ffb-b44b-d5bb7778afc5" options="" tags="structred-parent" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* Page layout */
+tw-story {
+  background: #1a1a2e;
+}
+
+tw-passage {
+  font-size: 24px;
+  line-height: 1.7;
+  max-width: 650px;
+  margin: auto;
+  padding: 20px;
+  color: #f0e6d3;
+  font-family: Georgia, serif;
+}
+
+/* Story text panel */
+.story-text {
+  background: rgba(0,0,0,0.25);
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 650px;
+  margin: auto;
+}
+
+/* All links become buttons */
+tw-link, .enchantment-link {
+  display: block;
+  width: 220px;
+  margin: 12px auto;
+  padding: 14px;
+  background: #F6E6C9;
+  border-radius: 12px;
+  font-size: 20px;
+  text-align: center;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+tw-link:hover, .enchantment-link:hover {
+  background: #e8d4a8;
+}
+
+/* Images */
+img {
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+/* Detour text box */
+.anchorbox {
+  background: #2a2a4a;
+  border-left: 4px solid #F6E6C9;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-style: italic;
+}
+
+/* Interrupt button prompt */
+.interrupt-prompt {
+  text-align: center;
+  color: #e8dcc2;
+  font-size: 18px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+/* Interrupt circle buttons - must come AFTER global tw-link rules */
+.interrupt-group {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 16px;
+  margin: 0px auto;
+}
+
+.interrupt-group tw-link,
+.interrupt-group .enchantment-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100px !important;
+  height: 100px !important;
+  border-radius: 50% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 50px !important;
+  background: #F6E6C9 !important;
+}
+
+.interrupt-group tw-consecutive-br {
+  display: none !important;
+}
+
+.action-group {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  gap: 16px;
+  margin: 16px auto;
+}
+
+.action-group tw-link,
+.action-group .enchantment-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  padding: 14px 20px !important;
+  margin: 0 !important;
+}
+
+.action-group tw-consecutive-br {
+  display: none !important;
+}</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-tag name="startup" color="yellow"></tw-tag><tw-passagedata pid="1" name="Cottage" tags="" position="575,300" size="100,100">(set: $scene to &quot;Cottage&quot;)(set: $anchors to (a:&quot;door&quot;,&quot;chimney&quot;,&quot;window&quot;))(if: (datatype: $visitedAnchors) is not &quot;array&quot;)[(set: $visitedAnchors to (a:))](if: (datatype: $scenePrev) is not &quot;string&quot;)[(set: $scenePrev to &quot;Cottage&quot;)](if: $scenePrev is not &quot;Cottage&quot;)[(set: $visitedAnchors to (a:))(set: $detourText to &quot;&quot;)(set: $detourFollowText to &quot;&quot;)(set: $detourTurns to 0)(set: $detourCount to 0)(set: $scenePrev to &quot;Cottage&quot;)]
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; width=&quot;800&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;story-text&quot;&gt;
+Deep in the forest, Goldilocks was walking along a quiet path.
+Soon she came to a small wooden cottage.
+Smoke curled gently from the chimney.
+Goldilocks looked at the door.
+She peered through the window.
+And she wondered who might live inside.
+(if: $detourText&#39;s length &gt; 0)[
+(print: $detourText)
+(print: $detourFollowText)
+(if: $detourTurns &lt; 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;💭✨ One more thought…&quot;)[(goto: &quot;DetourFollowUp&quot;)]
+(link: &quot;📖➡️ Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+(if: $detourTurns &gt;= 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;📖➡️ Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+]
+&lt;/div&gt;
+(if: $detourText&#39;s length is 0)[
+(if: $detourCount &lt; 2)[
+&lt;div class=&quot;interrupt-prompt&quot;&gt;What do you want to do?&lt;/div&gt;
+&lt;div class=&quot;interrupt-group&quot;&gt;
+(link: &quot;👀&quot;)[(goto: &quot;Interrupt_Look&quot;)]
+(link: &quot;💭&quot;)[(goto: &quot;Interrupt_Imagine&quot;)]
+(link: &quot;❓&quot;)[(goto: &quot;Interrupt_Ask&quot;)]
+(link: &quot;😟&quot;)[(goto: &quot;Interrupt_Scared&quot;)]
+&lt;/div&gt;
+]
+]
+
+(if: $detourCount &gt;= 2)[
+  (if: $detourText&#39;s length is 0)[
+    (link: &quot;➡️ She decided to go inside…&quot;)[
+      (set: $detourText to &quot;&quot;)
+      (set: $selectedAnchor to &quot;&quot;)
+      (set: $lastInterrupt to &quot;&quot;)
+      (set: $detourTurns to 0)
+      (set: $detourCount to 0)
+      (goto: &quot;Kitchen&quot;)
+    ]
+  ]
+]
+
+(if: $detourCount &lt; 2)[
+  (if: $detourText&#39;s length is 0)[
+    (text-color: &quot;#888&quot;)[Take a quick look around first.]
+  ]
+]</tw-passagedata><tw-passagedata pid="2" name="SelectAnchor" tags="" position="900,250" size="100,100">:: SelectAnchor
+(set: _opts to (a:))
+(for: each _a, ...$anchors)[
+  (if: not($visitedAnchors contains _a))[
+    (set: _opts to _opts + (a:_a))
+  ]
+]
+(if: _opts&#39;s length &gt; 0)[
+  (set: $selectedAnchor to _opts&#39;s (random: 1, _opts&#39;s length))
+](else:)[
+  (set: $selectedAnchor to $anchors&#39;s (random: 1, $anchors&#39;s length))
+]
+(if: not($visitedAnchors contains $selectedAnchor))[
+  (set: $visitedAnchors to $visitedAnchors + (a:$selectedAnchor))
+]
+(if: (datatype: $selectedAnchor) is not &quot;string&quot;)[
+  (set: $selectedAnchor to $anchors&#39;s 1st)
+]
+(set: $detourTurns to 0)
+(goto: &quot;Detour&quot;)</tw-passagedata><tw-passagedata pid="3" name="Detour" tags="" position="900,400" size="100,100">:: Detour
+(set: _sceneData to $detours&#39;s $scene)
+(set: _anchorData to _sceneData&#39;s $selectedAnchor)
+(if: $lastInterrupt is &quot;look&quot;)[(set: $detourText to _anchorData&#39;s &quot;look&quot;)(set: $savedInterrupt to &quot;look&quot;)]
+(if: $lastInterrupt is &quot;imagine&quot;)[(set: $detourText to _anchorData&#39;s &quot;imagine&quot;)(set: $savedInterrupt to &quot;imagine&quot;)]
+(if: $lastInterrupt is &quot;ask&quot;)[(set: $detourText to _anchorData&#39;s &quot;ask&quot;)(set: $savedInterrupt to &quot;ask&quot;)]
+(if: $lastInterrupt is &quot;scared&quot;)[(set: $detourText to _anchorData&#39;s &quot;scared&quot;)(set: $savedInterrupt to &quot;scared&quot;)]
+(goto: $scene)</tw-passagedata><tw-passagedata pid="4" name="init" tags="" position="900,100" size="100,100">
+(set: $mode to &quot;solo&quot;)
+(set: $scene to &quot;&quot;)
+(set: $scenePrev to &quot;&quot;)
+(set: $visitedAnchors to (a:))
+(set: $selectedAnchor to &quot;&quot;)
+(set: $lastInterrupt to &quot;&quot;)
+(set: $savedInterrupt to &quot;&quot;)
+(set: $detourText to &quot;&quot;)
+(set: $detourFollowText to &quot;&quot;)
+(set: $detourTurns to 0)
+(set: $detourCount to 0)
+(set: $detours to (dm:
+&quot;Kitchen&quot;, (dm:
+  &quot;big bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The big bowl was huge. Steam curled up like a tiny cloud.&quot;,
+    &quot;ask&quot;, &quot;That bowl belongs to Papa Bear. He likes everything big.&quot;,
+    &quot;imagine&quot;, &quot;What if heavy footsteps thumped down the hallway?&quot;,
+    &quot;scared&quot;, &quot;The kitchen is quiet. Nothing scary is happening.&quot;
+  ),
+  &quot;medium bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The middle bowl looked neat and smooth.&quot;,
+    &quot;ask&quot;, &quot;That bowl belongs to Mama Bear.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Mama Bear hummed while stirring the porridge.&quot;,
+    &quot;scared&quot;, &quot;The kitchen feels warm and calm.&quot;
+  ),
+  &quot;small bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The smallest bowl had cooled nicely.&quot;,
+    &quot;ask&quot;, &quot;That bowl belongs to Baby Bear.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear bounced in his chair waiting for breakfast.&quot;,
+    &quot;scared&quot;, &quot;A tiny spoon makes the room feel friendly.&quot;
+  )
+),
+&quot;Cottage&quot;, (dm:
+  &quot;door&quot;, (dm:
+    &quot;look&quot;, &quot;The wooden door looked old but strong.&quot;,
+    &quot;ask&quot;, &quot;Who might live in a cottage deep in the forest?&quot;,
+    &quot;imagine&quot;, &quot;What if the door creaked open slowly?&quot;,
+    &quot;scared&quot;, &quot;We don&#39;t have to go inside yet.&quot;
+  ),
+  &quot;chimney&quot;, (dm:
+    &quot;look&quot;, &quot;Smoke curled gently from the chimney.&quot;,
+    &quot;ask&quot;, &quot;Someone must be cooking inside.&quot;,
+    &quot;imagine&quot;, &quot;The smoke drifted into the sky like a cloud.&quot;,
+    &quot;scared&quot;, &quot;Warm smoke means a cosy home.&quot;
+  ),
+  &quot;window&quot;, (dm:
+    &quot;look&quot;, &quot;Through the window she saw a table with three bowls.&quot;,
+    &quot;ask&quot;, &quot;Why are there three bowls?&quot;,
+    &quot;imagine&quot;, &quot;Maybe they were waiting for breakfast.&quot;,
+    &quot;scared&quot;, &quot;We are just looking from outside.&quot;
+  )
+),
+&quot;Bedroom&quot;, (dm:
+  &quot;big bed&quot;, (dm:
+    &quot;look&quot;, &quot;The biggest bed looked very tall and very wide.&quot;,
+    &quot;ask&quot;, &quot;That bed belongs to Papa Bear.&quot;,
+    &quot;imagine&quot;, &quot;What if Papa Bear stretched his big paws across the whole bed?&quot;,
+    &quot;scared&quot;, &quot;The bedroom was quiet and calm, with soft blankets and pillows.&quot;
+  ),
+  &quot;medium bed&quot;, (dm:
+    &quot;look&quot;, &quot;The middle bed had a neat blanket folded across it.&quot;,
+    &quot;ask&quot;, &quot;That bed belongs to Mama Bear.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Mama Bear fluffed the pillows before leaving the room.&quot;,
+    &quot;scared&quot;, &quot;The room felt cosy, like a place made for resting.&quot;
+  ),
+  &quot;small bed&quot;, (dm:
+    &quot;look&quot;, &quot;The smallest bed looked just right for someone little.&quot;,
+    &quot;ask&quot;, &quot;That bed belongs to Baby Bear.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear had jumped on the bed earlier that morning.&quot;,
+    &quot;scared&quot;, &quot;The soft blankets made the bed feel safe and warm.&quot;
+  )
+),
+&quot;BearsReturn&quot;, (dm:
+  &quot;stairs&quot;, (dm:
+    &quot;look&quot;, &quot;At the bottom of the stairs stood three bears, looking up quietly.&quot;,
+    &quot;ask&quot;, &quot;They had just come home from their walk in the woods.&quot;,
+    &quot;imagine&quot;, &quot;What if the stairs creaked as they slowly climbed up?&quot;,
+    &quot;scared&quot;, &quot;They looked curious more than angry.&quot;
+  ),
+  &quot;footsteps&quot;, (dm:
+    &quot;look&quot;, &quot;Heavy footsteps padded softly across the wooden floor.&quot;,
+    &quot;ask&quot;, &quot;Papa Bear&#39;s steps were big, Mama Bear&#39;s were steady, and Baby Bear&#39;s were small.&quot;,
+    &quot;imagine&quot;, &quot;Thump… step… tap… the footsteps echoed gently through the house.&quot;,
+    &quot;scared&quot;, &quot;The sounds were slow and calm, not rushing or loud.&quot;
+  ),
+  &quot;voices&quot;, (dm:
+    &quot;look&quot;, &quot;Three different voices murmured softly in the hallway.&quot;,
+    &quot;ask&quot;, &quot;They were wondering who had been in their house.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear whispered, &#39;Someone&#39;s been here!&#39;&quot;,
+    &quot;scared&quot;, &quot;Their voices sounded surprised, not scary.&quot;
+  )
+)
+))
+(set: $followups to (dm:
+&quot;Cottage&quot;, (dm:
+  &quot;door&quot;, (dm:
+    &quot;look&quot;, &quot;The handle looked shiny, like it had been used today.&quot;,
+    &quot;ask&quot;, &quot;If Goldilocks knocked, someone might answer… or the house might stay quiet.&quot;,
+    &quot;imagine&quot;, &quot;Maybe the door has a secret squeak sound—eeeek!&quot;,
+    &quot;scared&quot;, &quot;If you feel nervous, we can pause and take a slow breath.&quot;
+  ),
+  &quot;chimney&quot;, (dm:
+    &quot;look&quot;, &quot;The smoke rose slowly, like the cottage was calm.&quot;,
+    &quot;ask&quot;, &quot;If it&#39;s porridge, it might be cooling down right now.&quot;,
+    &quot;imagine&quot;, &quot;What if the smoke spelled &#39;hello&#39; in the air… then vanished?&quot;,
+    &quot;scared&quot;, &quot;Warm smells can be comforting. You&#39;re doing great.&quot;
+  ),
+  &quot;window&quot;, (dm:
+    &quot;look&quot;, &quot;The bowls inside were different sizes—big, medium, and small.&quot;,
+    &quot;ask&quot;, &quot;Maybe it&#39;s a family… or maybe three friends who love tidy tables.&quot;,
+    &quot;imagine&quot;, &quot;What if the curtain fluttered and made a moving shadow?&quot;,
+    &quot;scared&quot;, &quot;We can stop looking anytime. It&#39;s okay to keep things cosy.&quot;
+  )
+),
+&quot;Kitchen&quot;, (dm:
+  &quot;big bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The porridge bubbled gently—still far too hot.&quot;,
+    &quot;ask&quot;, &quot;Papa Bear liked his porridge piping hot to wake him up.&quot;,
+    &quot;imagine&quot;, &quot;Maybe a deep voice would boom, &#39;Who&#39;s been near my porridge?&#39;&quot;,
+    &quot;scared&quot;, &quot;It&#39;s only quiet kitchen noises. Nothing is rushing or chasing.&quot;
+  ),
+  &quot;medium bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The spoon sat carefully beside the bowl, like someone had just stood up.&quot;,
+    &quot;ask&quot;, &quot;Mama Bear liked things neat and just right.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Mama Bear smiled, proud of her cooking.&quot;,
+    &quot;scared&quot;, &quot;This feels like a family kitchen—warm, not scary.&quot;
+  ),
+  &quot;small bowl&quot;, (dm:
+    &quot;look&quot;, &quot;The steam was almost gone now. It was ready to taste.&quot;,
+    &quot;ask&quot;, &quot;Baby Bear&#39;s bowl is small because he&#39;s still growing.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear bounced in his chair, too excited to wait.&quot;,
+    &quot;scared&quot;, &quot;The tiny spoon makes it feel friendly. You&#39;re safe.&quot;
+  )
+),
+&quot;Bedroom&quot;, (dm:
+  &quot;big bed&quot;, (dm:
+    &quot;look&quot;, &quot;The mattress looked strong and sturdy.&quot;,
+    &quot;ask&quot;, &quot;Papa Bear liked lots of space to stretch when he slept.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Papa Bear snored like a rumbling cloud.&quot;,
+    &quot;scared&quot;, &quot;The room stayed quiet and peaceful.&quot;
+  ),
+  &quot;medium bed&quot;, (dm:
+    &quot;look&quot;, &quot;The blanket lay neatly across the bed.&quot;,
+    &quot;ask&quot;, &quot;Mama Bear liked everything to be tidy.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Mama Bear hummed a lullaby while making the bed.&quot;,
+    &quot;scared&quot;, &quot;The soft pillows made the room feel gentle.&quot;
+  ),
+  &quot;small bed&quot;, (dm:
+    &quot;look&quot;, &quot;The little pillow looked soft and comfortable.&quot;,
+    &quot;ask&quot;, &quot;Baby Bear&#39;s bed was just the right size for him.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear liked to curl up like a little ball when he slept.&quot;,
+    &quot;scared&quot;, &quot;The tiny bed looked friendly and warm.&quot;
+  )
+),
+&quot;BearsReturn&quot;, (dm:
+  &quot;stairs&quot;, (dm:
+    &quot;look&quot;, &quot;The bears stood still, listening carefully.&quot;,
+    &quot;ask&quot;, &quot;They were wondering what had happened inside their house.&quot;,
+    &quot;imagine&quot;, &quot;What if they climbed the stairs very slowly… step by step?&quot;,
+    &quot;scared&quot;, &quot;They didn&#39;t sound angry, just curious.&quot;
+  ),
+  &quot;footsteps&quot;, (dm:
+    &quot;look&quot;, &quot;The footsteps paused at the bottom of the stairs.&quot;,
+    &quot;ask&quot;, &quot;Each bear had a different step — big, medium, and small.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear bounced a little as he walked.&quot;,
+    &quot;scared&quot;, &quot;The house stayed calm and quiet.&quot;
+  ),
+  &quot;voices&quot;, (dm:
+    &quot;look&quot;, &quot;The voices grew a little louder as they talked.&quot;,
+    &quot;ask&quot;, &quot;They were trying to figure out what had happened.&quot;,
+    &quot;imagine&quot;, &quot;Maybe Baby Bear said, &#39;Let&#39;s go upstairs and see!&#39;&quot;,
+    &quot;scared&quot;, &quot;Their voices still sounded gentle.&quot;
+  )
+)
+))
+
+[[Begin-&gt;Opening]]</tw-passagedata><tw-passagedata pid="5" name="DetourFollowUp" tags="" position="900,525" size="100,100">:: DetourFollowUp
+(set: _sceneData to $followups&#39;s $scene)
+(set: _anchorData to _sceneData&#39;s $selectedAnchor)
+(if: $savedInterrupt is &quot;look&quot;)[(set: $detourFollowText to _anchorData&#39;s &quot;look&quot;)]
+(if: $savedInterrupt is &quot;imagine&quot;)[(set: $detourFollowText to _anchorData&#39;s &quot;imagine&quot;)]
+(if: $savedInterrupt is &quot;ask&quot;)[(set: $detourFollowText to _anchorData&#39;s &quot;ask&quot;)]
+(if: $savedInterrupt is &quot;scared&quot;)[(set: $detourFollowText to _anchorData&#39;s &quot;scared&quot;)]
+(set: $detourTurns to $detourTurns + 1)
+(goto: $scene)</tw-passagedata><tw-passagedata pid="6" name="Interrupt_Look" tags="" position="750,200" size="100,100">:: Interrupt_Look
+(set: $lastInterrupt to (str: &quot;look&quot;))
+(goto: &quot;SelectAnchor&quot;)
+</tw-passagedata><tw-passagedata pid="7" name="Interrupt_Imagine" tags="" position="750,325" size="100,100">
+(set: $lastInterrupt to &quot;imagine&quot;)
+(goto: &quot;SelectAnchor&quot;)</tw-passagedata><tw-passagedata pid="8" name="Interrupt_Ask" tags="" position="750,450" size="100,100">
+(set: $lastInterrupt to &quot;ask&quot;)
+(goto: &quot;SelectAnchor&quot;)</tw-passagedata><tw-passagedata pid="9" name="Interrupt_Scared" tags="" position="750,575" size="100,100">
+(set: $lastInterrupt to &quot;scared&quot;)
+(goto: &quot;SelectAnchor&quot;)</tw-passagedata><tw-passagedata pid="10" name="Test" tags="" position="1025,325" size="100,100">:: Test
+it got here</tw-passagedata><tw-passagedata pid="11" name="Kitchen" tags="" position="575,425" size="100,100">(set: $scene to &quot;Kitchen&quot;)(set: $anchors to (a:&quot;big bowl&quot;,&quot;medium bowl&quot;,&quot;small bowl&quot;))(if: (datatype: $visitedAnchors) is not &quot;array&quot;)[(set: $visitedAnchors to (a:))](if: (datatype: $scenePrev) is not &quot;string&quot;)[(set: $scenePrev to &quot;Kitchen&quot;)](if: $scenePrev is not &quot;Kitchen&quot;)[(set: $visitedAnchors to (a:))(set: $detourText to &quot;&quot;)(set: $detourFollowText to &quot;&quot;)(set: $detourTurns to 0)(set: $detourCount to 0)(set: $scenePrev to &quot;Kitchen&quot;)]
+&lt;div style=&quot;text-align:center;&quot;&gt;
+&lt;img src=&quot;https://cdn.midjourney.com/33793e54-e9b0-4bc7-bc6f-79fdc0b7655b/0_1.jpeg&quot; width=&quot;800&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;story-text&quot;&gt;
+On the table were three bowls of porridge.
+One bowl was very big.
+One bowl was medium-sized.
+And one bowl was very small.
+Goldilocks was feeling quite hungry.
+(if: $detourText&#39;s length &gt; 0)[
+(print: $detourText)
+(print: $detourFollowText)
+(if: $detourTurns &lt; 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;💭✨ One more thought…&quot;)[(goto: &quot;DetourFollowUp&quot;)]
+(link: &quot;📖➡️ Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+(if: $detourTurns &gt;= 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;📖➡️ Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+]
+&lt;/div&gt;
+(if: $detourText&#39;s length is 0)[
+(if: $mode is &quot;solo&quot;)[
+(if: $detourCount &lt; 2)[
+&lt;div class=&quot;interrupt-prompt&quot;&gt;What do you want to do?&lt;/div&gt;
+&lt;div class=&quot;interrupt-group&quot;&gt;
+(link: &quot;👀&quot;)[(goto: &quot;Interrupt_Look&quot;)]
+(link: &quot;💭&quot;)[(goto: &quot;Interrupt_Imagine&quot;)]
+(link: &quot;❓&quot;)[(goto: &quot;Interrupt_Ask&quot;)]
+(link: &quot;😟&quot;)[(goto: &quot;Interrupt_Scared&quot;)]
+&lt;/div&gt;
+]
+]
+(if: $mode is &quot;parent&quot;)[
+(if: $detourCount &lt; 4)[
+&lt;div class=&quot;interrupt-prompt&quot;&gt;What would you like to ask about this picture?&lt;/div&gt;
+(link: &quot;Ask a question...&quot;)[(goto: &quot;KitchenParentQuestion&quot;)]
+]
+]
+]
+]
+(if: $mode is &quot;solo&quot;)[
+(if: $detourCount &gt;= 2)[(if: $detourText&#39;s length is 0)[(link: &quot;Goldilocks went to explore…&quot;)[
+(set: $detourText to &quot;&quot;)
+(set: $selectedAnchor to &quot;&quot;)
+(set: $lastInterrupt to &quot;&quot;)
+(set: $detourTurns to 0)
+(set: $detourCount to 0)
+(goto: &quot;Bedroom&quot;)
+]]]
+(if: $detourCount &lt; 2)[(if: $detourText&#39;s length is 0)[(text-color: &quot;#888&quot;)[Take a quick look around first.]]]
+]
+(if: $mode is &quot;parent&quot;)[
+(if: $detourCount &gt;= 4)[(if: $detourText&#39;s length is 0)[(link: &quot;➡️ Goldilocks went to explore…&quot;)[
+(set: $detourText to &quot;&quot;)
+(set: $selectedAnchor to &quot;&quot;)
+(set: $lastInterrupt to &quot;&quot;)
+(set: $detourTurns to 0)
+(set: $detourCount to 0)
+(goto: &quot;Bedroom&quot;)
+]]]
+(if: $detourCount &lt; 4)[(if: $detourText&#39;s length is 0)[(text-color: &quot;#888&quot;)[Take a quick look around first.]]]
+]</tw-passagedata><tw-passagedata pid="12" name="Bedroom" tags="" position="575,550" size="100,100">(set: $scene to &quot;Bedroom&quot;)(set: $anchors to (a:&quot;big bed&quot;,&quot;medium bed&quot;,&quot;small bed&quot;))(if: (datatype: $visitedAnchors) is not &quot;array&quot;)[(set: $visitedAnchors to (a:))](if: (datatype: $scenePrev) is not &quot;string&quot;)[(set: $scenePrev to &quot;Bedroom&quot;)](if: $scenePrev is not &quot;Bedroom&quot;)[(set: $visitedAnchors to (a:))(set: $detourText to &quot;&quot;)(set: $detourFollowText to &quot;&quot;)(set: $detourTurns to 0)(set: $detourCount to 0)(set: $scenePrev to &quot;Bedroom&quot;)]
+
+  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.midjourney.com/c1dfbf9b-7753-4923-aa3b-c0f9a229aa6d/0_0.jpeg&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+Goldilocks climbed the stairs and found a bedroom.
+
+Inside were three beds.
+
+One bed was very big.
+
+One bed was medium-sized.
+
+And one bed was very small.
+
+Goldilocks was feeling very sleepy now.
+
+(if: $detourText&#39;s length &gt; 0)[
+  (print: $detourText)
+
+  (print: $detourFollowText)
+
+(print: $detourFollowText)
+(if: $detourTurns &lt; 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;💭✨ One more thought…&quot;)[(goto: &quot;DetourFollowUp&quot;)]
+(link: &quot;📖➡️ Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+(if: $detourTurns &gt;= 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;📖➡️ Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+]
+&lt;/div&gt;
+(if: $detourText&#39;s length is 0)[
+  (if: $detourCount &lt; 2)[
+    &lt;div class=&quot;interrupt-prompt&quot;&gt;What do you want to do?&lt;/div&gt;
+&lt;div class=&quot;interrupt-group&quot;&gt;
+(link: &quot;👀&quot;)[(goto: &quot;Interrupt_Look&quot;)]
+(link: &quot;💭&quot;)[(goto: &quot;Interrupt_Imagine&quot;)]
+(link: &quot;❓&quot;)[(goto: &quot;Interrupt_Ask&quot;)]
+(link: &quot;😟&quot;)[(goto: &quot;Interrupt_Scared&quot;)]
+&lt;/div&gt;
+  ]
+]
+
+(if: $detourCount &gt;= 2)[
+  (if: $detourText&#39;s length is 0)[
+    (link: &quot;➡️ And then the Bear&#39;s returned…&quot;)[
+      (set: $detourText to &quot;&quot;)
+      (set: $selectedAnchor to &quot;&quot;)
+      (set: $lastInterrupt to &quot;&quot;)
+      (set: $detourTurns to 0)
+      (set: $detourCount to 0)
+      (goto: &quot;BearsReturn&quot;)
+    ]
+  ]
+]
+
+(if: $detourCount &lt; 2)[
+  (if: $detourText&#39;s length is 0)[
+    (text-color: &quot;#888&quot;)[Take a quick look around first.]
+  ]
+]</tw-passagedata><tw-passagedata pid="13" name="BearsReturn" tags="" position="575,675" size="100,100">(set: $scene to &quot;BearsReturn&quot;)(set: $anchors to (a:&quot;stairs&quot;,&quot;footsteps&quot;,&quot;voices&quot;))(if: (datatype: $visitedAnchors) is not &quot;array&quot;)[(set: $visitedAnchors to (a:))](if: (datatype: $scenePrev) is not &quot;string&quot;)[(set: $scenePrev to &quot;BearsReturn&quot;)](if: $scenePrev is not &quot;BearsReturn&quot;)[(set: $visitedAnchors to (a:))(set: $detourText to &quot;&quot;)(set: $detourFollowText to &quot;&quot;)(set: $detourTurns to 0)(set: $detourCount to 0)(set: $scenePrev to &quot;BearsReturn&quot;)]
+
+  &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.discordapp.com/attachments/1248677589523108000/1479107024334749706/Just_One_More_Question_-_Bears_Return_Stairs_Pacing.png?ex=69ad7843&amp;is=69ac26c3&amp;hm=98fb1a35ac4a6360cb615ce0eeb565dea5c70e98f0b9c486bcaa00c7ead79163&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+Just then, the three bears came home from their walk in the forest.
+
+Papa Bear sniffed the air.
+
+“Someone’s been eating my porridge!” he said in his big voice.
+
+Mama Bear looked at the table.
+
+“Someone’s been eating my porridge too!”
+
+Then Baby Bear peered into his little bowl.
+
+“Someone’s been eating my porridge… and they ate it all up!”
+
+The bears looked around the kitchen. Something wasn’t right.
+
+Slowly, they walked toward the stairs and looked up.
+
+(if: $detourText&#39;s length &gt; 0)[
+  (print: $detourText)
+
+  (print: $detourFollowText)
+
+(print: $detourFollowText)
+(if: $detourTurns &lt; 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;💭✨ One more thought…&quot;)[(goto: &quot;DetourFollowUp&quot;)]
+(link: &quot;📖➡️ Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+(if: $detourTurns &gt;= 1)[
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;📖➡️ Back to the story&quot;)[(goto: &quot;BackToStory&quot;)]
+&lt;/div&gt;
+]
+]
+&lt;/div&gt;
+(if: $detourText&#39;s length is 0)[
+  (if: $detourCount &lt; 2)[
+    &lt;div class=&quot;interrupt-prompt&quot;&gt;What do you want to do?&lt;/div&gt;
+&lt;div class=&quot;interrupt-group&quot;&gt;
+(link: &quot;👀&quot;)[(goto: &quot;Interrupt_Look&quot;)]
+(link: &quot;💭&quot;)[(goto: &quot;Interrupt_Imagine&quot;)]
+(link: &quot;❓&quot;)[(goto: &quot;Interrupt_Ask&quot;)]
+(link: &quot;😟&quot;)[(goto: &quot;Interrupt_Scared&quot;)]
+&lt;/div&gt;
+  ]
+]
+
+(if: $detourCount &gt;= 2)[
+  (if: $detourText&#39;s length is 0)[
+    (link: &quot;➡️ They went up the stairs…&quot;)[
+      (set: $detourText to &quot;&quot;)
+      (set: $selectedAnchor to &quot;&quot;)
+      (set: $lastInterrupt to &quot;&quot;)
+      (set: $detourTurns to 0)
+      (set: $detourCount to 0)
+      (goto: &quot;Climax&quot;)
+    ]
+  ]
+]
+
+(if: $detourCount &lt; 2)[
+  (if: $detourText&#39;s length is 0)[
+    (text-color: &quot;#888&quot;)[Take a quick look around first.]
+  ]
+]</tw-passagedata><tw-passagedata pid="14" name="Climax" tags="" position="575,800" size="100,100">:: Climax
+(set: $scene to &quot;Climax&quot;)
+
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.discordapp.com/attachments/1248677589523108000/1479108209754243072/Copy_of_Untitled.png?ex=69ad795d&amp;is=69ac27dd&amp;hm=78b66c38ad2577dc52a6e754a31f0ddd7f42657dc9664e709349917acad426be&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+Papa Bear looked at his bed.
+
+&quot;Someone&#39;s been sleeping in my bed!&quot; he said.
+
+Mama Bear looked at her bed.
+
+&quot;Someone&#39;s been sleeping in my bed too!&quot;
+
+Then Baby Bear looked at his little bed.
+
+&quot;Someone&#39;s been sleeping in my bed — and here she is!&quot;
+
+Goldilocks woke up with a start. Three bears were standing beside the bed. Her eyes grew wide.
+
+What do you think happens next?
+
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;🏃 Goldilocks runs away&quot;)[
+  (goto: &quot;EndingRun&quot;)
+]
+(link: &quot;🙏 Goldilocks says sorry&quot;)[
+  (goto: &quot;EndingApology&quot;)
+]
+(link: &quot;🫣 Goldilocks hides&quot;)[
+  (goto: &quot;EndingHide&quot;)
+]
+
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="15" name="BackToStory" tags="" position="750,700" size="100,100">:: BackToStory
+(set: $detourText to &quot;&quot;)
+(set: $detourFollowText to &quot;&quot;)
+(set: $detourTurns to 0)
+(set: $detourCount to $detourCount + 1)
+(goto: $scene)</tw-passagedata><tw-passagedata pid="16" name="EndingRun" tags="" position="450,925" size="100,100">:: EndingRun
+Goldilocks jumped out of bed and ran down the stairs, through the kitchen, and out of the cottage door.
+
+She ran all the way through the forest until she reached home.
+
+
+(link: &quot;➡️ And she never went into someone else&#39;s house again.&quot;)[(goto: &quot;Closing&quot;)]</tw-passagedata><tw-passagedata pid="17" name="EndingApology" tags="" position="575,925" size="100,100">:: EndingApology
+Goldilocks sat up slowly and looked at the three bears.
+
+&quot;I&#39;m sorry,&quot; she said quietly.
+
+Papa Bear folded his arms. Mama Bear thought for a moment.
+
+Baby Bear said, &quot;Maybe next time you should knock first.&quot;
+
+
+(link: &quot;➡️ Goldilocks nodded. And she promised to remember.&quot;)[(goto: &quot;Closing&quot;)]</tw-passagedata><tw-passagedata pid="18" name="EndingHide" tags="" position="700,925" size="100,100">:: EndingHide
+Goldilocks hid under the blanket as quietly as she could.
+
+The bears looked at the little bed. The blanket wriggled.
+
+Baby Bear giggled. &quot;I think someone&#39;s hiding in my bed!&quot;
+
+
+(link: &quot;➡️ Goldilocks peeked out, and everyone laughed.&quot;)[(goto: &quot;Closing&quot;)]</tw-passagedata><tw-passagedata pid="19" name="Opening" tags="" position="575,175" size="100,100"> (link: &quot;Solo Mode&quot;)[
+  (set: $mode to &quot;solo&quot;)
+  (goto: &quot;Cottage&quot;)
+]
+(link: &quot;Parent Mode&quot;)[
+  (set: $mode to &quot;parent&quot;)
+  (goto: &quot;Cottage&quot;)
+]
+ 
+ &lt;div class=&quot;main&quot;&gt;
+    &lt;div style=&quot;text-align:center;&quot;&gt;
+      &lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; style=&quot;opacity:0.85;&quot; width=&quot;800&quot;&gt;
+    &lt;/div&gt;
+
+Once upon a time, deep in a quiet forest, there was a little wooden cottage.
+
+Inside the cottage lived three bears.
+Papa Bear, Mama Bear, and Baby Bear.
+
+One morning they made some warm porridge for breakfast.
+But it was too hot to eat!
+
+So the three bears went for a walk in the forest while it cooled down.
+
+And while they were gone… someone else arrived.
+
+(link: &quot;➡️ And while they were gone… someone else arrived.&quot;)[(goto: &quot;Cottage&quot;)]</tw-passagedata><tw-passagedata pid="20" name="Closing" tags="" position="575,1100" size="100,100">&lt;img src=&quot;https://cdn.midjourney.com/e1bc3d96-2ddc-4aa6-a087-209f02215af9/0_2.jpeg&quot; width=&quot;800&quot;
+style=&quot;filter: sepia(0.35) brightness(0.85) saturate(1.1);&quot;&gt;
+
+And that was the end of Goldilocks&#39; very surprising day.
+
+
+
+Some stories end with running.
+
+Some stories end with hiding.
+
+And some stories end with saying sorry.
+
+
+
+But every story ends the same way.
+
+The forest grows quiet.
+
+The cottage becomes still.
+
+And the sun slowly slips behind the trees.
+
+
+
+Maybe the bears finished their porridge.
+
+Maybe Goldilocks went safely home.
+
+Maybe tomorrow there will be another story.
+
+
+
+Goodnight, little storyteller.
+
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;📖🔁 Play again?&quot;)[(goto: &quot;Opening&quot;)]
+(link: &quot;📚 Choose another story&quot;)[(goto: &quot;Placeholder&quot;)]
+(link: &quot;🌙 Goodnight&quot;)[(goto: &quot;Goodnight&quot;)]
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="21" name="Placeholder" tags="" position="700,1075" size="100,100">There will be more stories here soon.
+
+Maybe one about a wolf and three little pigs.
+
+Or a girl in a red cloak walking through the forest.
+
+But for now, Goldilocks is the only story ready.
+
+&lt;div class=&quot;action-group&quot;&gt;
+(link: &quot;Play again?&quot;)[(goto: &quot;Opening&quot;)]
+(link: &quot;Goodnight&quot;)[(goto: &quot;Goodnight&quot;)]
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="22" name="Goodnight" tags="" position="700,1200" size="100,100">And that was the end of Goldilocks’ very surprising day.
+
+The forest grows quiet.
+The cottage becomes still.
+
+Stories change when someone asks questions.
+
+And tonight…
+you helped tell this one.
+
+Goodnight, little storyteller.
+
+(link: &quot;Play again?&quot;)[(goto: &quot;Opening&quot;)]</tw-passagedata><tw-passagedata pid="23" name="KitchenParentQuestion" tags="" position="425,425" size="100,100">(set: $selectedAnchor to &quot;&quot;)
+(set: $lastInterrupt to &quot;&quot;)
+(set: $parentQuestion to (lowercase: $parentQuestion))
+question: (print: $parentQuestion)
+interrupt: (print: $lastInterrupt)
+anchor: (print: $selectedAnchor)</tw-passagedata><tw-passagedata pid="24" name="KitchenAskPrompt" tags="" position="300,425" size="100,100">(set: $parentQuestion to (prompt: &quot;What would you like to ask?&quot; &quot;&quot;))
+(goto: &quot;KitchenParentQuestion&quot;)</tw-passagedata></tw-storydata>
+
