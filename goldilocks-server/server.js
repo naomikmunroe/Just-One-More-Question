@@ -135,6 +135,39 @@ const pacingInstructions = {
     closing: `Pacing: It is getting late in the story. Responses should be short, soft and soothing. Use sleepy, cosy language. Gently nudge toward the story's end.`
 };
 
+// ============================================================
+// REQUEST QUEUE
+// Prevents hitting Anthropic's 50 req/min rate limit by
+// spacing out requests with a minimum interval between them.
+// ============================================================
+
+const requestQueue = [];
+let isProcessing = false;
+const MIN_INTERVAL = 1500; // ms between requests — 40 req/min max
+
+async function queueRequest(requestFn) {
+  return new Promise((resolve, reject) => {
+    requestQueue.push({ requestFn, resolve, reject });
+    if (!isProcessing) processQueue();
+  });
+}
+
+async function processQueue() {
+  if (requestQueue.length === 0) {
+    isProcessing = false;
+    return;
+  }
+  isProcessing = true;
+  const { requestFn, resolve, reject } = requestQueue.shift();
+  try {
+    const result = await requestFn();
+    resolve(result);
+  } catch (err) {
+    reject(err);
+  }
+  setTimeout(processQueue, MIN_INTERVAL);
+}
+
 app.post('/ask', async (req, res) => {
     const { question, scene, emotion, pacing } = req.body;
     const basePrompt = scenePrompts[scene];
@@ -149,7 +182,7 @@ app.post('/ask', async (req, res) => {
     ).replace('{PARENT_QUESTION}', question);
 
     try {
-        const response = await axios.post('https://api.anthropic.com/v1/messages', {
+        const response = await queueRequest(() => axios.post('https://api.anthropic.com/v1/messages', {
             model: 'claude-sonnet-4-20250514',
             max_tokens: 200,
             messages: [{ role: 'user', content: prompt }]
@@ -159,7 +192,7 @@ app.post('/ask', async (req, res) => {
                 'anthropic-version': '2023-06-01',
                 'content-type': 'application/json'
             }
-        });
+        }));
         res.json({ text: response.data.content[0].text });
     } catch (err) {
         console.error('Error:', err.response ? err.response.data : err.message);
@@ -185,7 +218,7 @@ ${interruptDescriptions[interrupt]} the ${anchor}.
 Respond in 2-3 short sentences, warm and imaginative, suitable for a bedtime story. Stay consistent with any recent story moments listed above. Do not advance the story beyond this moment. Do not use framing phrases. Just tell the story directly to the child.`;
 
     try {
-        const response = await axios.post('https://api.anthropic.com/v1/messages', {
+        const response = await queueRequest(() => axios.post('https://api.anthropic.com/v1/messages', {
             model: 'claude-sonnet-4-20250514',
             max_tokens: 200,
             messages: [{ role: 'user', content: prompt }]
@@ -195,7 +228,7 @@ Respond in 2-3 short sentences, warm and imaginative, suitable for a bedtime sto
                 'anthropic-version': '2023-06-01',
                 'content-type': 'application/json'
             }
-        });
+        }));
         res.json({ text: response.data.content[0].text });
     } catch (err) {
         console.error('Error:', err.response ? err.response.data : err.message);
@@ -230,7 +263,7 @@ Do not repeat details from the recent story moments listed above.
 Add a fresh detail, a new observation, or take the imagination somewhere slightly different.
 Respond in 2-3 short sentences. Warm and imaginative, suitable for a bedtime story. Do not advance the story. Do not use framing phrases. Just tell the story directly to the child.`;
     try {
-        const response = await axios.post('https://api.anthropic.com/v1/messages', {
+        const response = await queueRequest(() => axios.post('https://api.anthropic.com/v1/messages', {
             model: 'claude-sonnet-4-20250514',
             max_tokens: 200,
             messages: [{ role: 'user', content: prompt }]
@@ -240,7 +273,7 @@ Respond in 2-3 short sentences. Warm and imaginative, suitable for a bedtime sto
                 'anthropic-version': '2023-06-01',
                 'content-type': 'application/json'
             }
-        });
+        }));
         res.json({ text: response.data.content[0].text });
     } catch (err) {
         console.error('Error:', err.response ? err.response.data : err.message);
@@ -258,7 +291,7 @@ Story response: ${response}
 Focus on colours, textures, and specific objects mentioned. Reply with only the summary phrase. Example: "green door with brass knocker and carved flowers"`;
 
     try {
-        const result = await axios.post('https://api.anthropic.com/v1/messages', {
+        const result = await queueRequest(() => axios.post('https://api.anthropic.com/v1/messages', {
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 30,
             messages: [{ role: 'user', content: prompt }]
@@ -268,7 +301,7 @@ Focus on colours, textures, and specific objects mentioned. Reply with only the 
                 'anthropic-version': '2023-06-01',
                 'content-type': 'application/json'
             }
-        });
+        }));
         res.json({ summary: result.data.content[0].text.trim() });
     } catch (err) {
         console.error('Error:', err.response ? err.response.data : err.message);
@@ -288,7 +321,7 @@ Reply with exactly one word from this list: curious, anxious, imaginative
 Reply with only the single word, nothing else.`;
 
     try {
-        const response = await axios.post('https://api.anthropic.com/v1/messages', {
+        const response = await queueRequest(() => axios.post('https://api.anthropic.com/v1/messages', {
             model: 'claude-sonnet-4-20250514',
             max_tokens: 10,
             messages: [{ role: 'user', content: prompt }]
@@ -298,7 +331,7 @@ Reply with only the single word, nothing else.`;
                 'anthropic-version': '2023-06-01',
                 'content-type': 'application/json'
             }
-        });
+        }));
         const emotion = response.data.content[0].text.trim().toLowerCase();
         const valid = ['curious', 'anxious', 'imaginative'];
         res.json({ emotion: valid.includes(emotion) ? emotion : 'curious' });
