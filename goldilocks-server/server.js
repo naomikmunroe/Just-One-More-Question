@@ -259,7 +259,7 @@ Focus on colours, textures, and specific objects mentioned. Reply with only the 
 
     try {
         const result = await axios.post('https://api.anthropic.com/v1/messages', {
-            model: 'claude-sonnet-4-20250514',
+            model: 'claude-haiku-4-5-20251001',
             max_tokens: 30,
             messages: [{ role: 'user', content: prompt }]
         }, {
