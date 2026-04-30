@@ -15,7 +15,7 @@ app.use(cors({
     'https://munroe-interactive.itch.io/',
     'https://itch.io',
     'http://localhost:3000',
-    'https://twinery.org/'
+    'https://twinery.org/',
     'null'
   ],
   methods: ['GET', 'POST'],
