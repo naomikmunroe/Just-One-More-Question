@@ -350,9 +350,8 @@ Story response: ${response}
 Focus on colours, textures, and specific objects mentioned. Reply with only the summary phrase. Example: "green door with brass knocker and carved flowers"`;
 
   try {
-    // NOT queued — runs directly to avoid blocking main requests
     const result = await axios.post('https://api.anthropic.com/v1/messages', {
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 30,
       messages: [{ role: 'user', content: prompt }]
     }, {
@@ -364,8 +363,9 @@ Focus on colours, textures, and specific objects mentioned. Reply with only the 
     });
     res.json({ summary: result.data.content[0].text.trim() });
   } catch (err) {
+    // Silently return empty summary — story continues normally
     console.error('Summarise error:', err.response ? err.response.data : err.message);
-    res.status(500).json({ error: 'Summarise failed' });
+    res.json({ summary: '' });
   }
 });
 
