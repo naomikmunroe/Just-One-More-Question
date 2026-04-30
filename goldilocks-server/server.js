@@ -10,17 +10,7 @@ const app = express();
 // ============================================================
 // CORS — allow requests from itch.io and local development
 // ============================================================
-app.use(cors({
-  origin: [
-    'https://munroe-interactive.itch.io/',
-    'https://itch.io',
-    'http://localhost:3000',
-    'https://twinery.org/',
-    'null'
-  ],
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
-}));
+app.use(cors());
 
 app.use(express.json());
 
