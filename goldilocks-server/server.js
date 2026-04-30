@@ -12,9 +12,10 @@ const app = express();
 // ============================================================
 app.use(cors({
   origin: [
-    'https://naomikmunroe.itch.io',
+    'https://munroe-interactive.itch.io/',
     'https://itch.io',
     'http://localhost:3000',
+    'https://twinery.org/'
     'null'
   ],
   methods: ['GET', 'POST'],
